@@ -1,5 +1,7 @@
 # CSCI3100_Project_A2
 
+##Artisan’s Sky
+
 ## Initial Ideas
 1. Requests (Tui T) (Products) (buy/sell/bid)
 2. Better version of CUTS
