@@ -1,14 +1,10 @@
 # CSCI3100_Project_A2
 
-## Initial Ideas
-1. Requests (Tui T) (Products) (buy/sell/bid)
-2. Better version of CUTS
-3. NEW CUHK Secret
-
+## Artian's Sky
 Lam Cheuk Hin 1155143825
 Lam Lok Hin 1155143373
 Poon Tsz Fung 1155142944
-Ching Ho Yin 1155141930
+Ching Ho Yin1155141930
 Ng Chi Kit 1155142020
 
 ## Final Topic
