@@ -1,4 +1,4 @@
-# CSCI3100_Project
+# CSCI3100_Project_A2
 
 ## Initial Ideas
 1. Requests (Tui T) (Products) (buy/sell/bid)
