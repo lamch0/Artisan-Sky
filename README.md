@@ -13,5 +13,3 @@ Ng Chi Kit 1155142020
 
 ## Final Topic
 Products Platform
-
-Test
