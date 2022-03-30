@@ -48,13 +48,7 @@ app.get("/test", (req, res) => {
 })
 
 app.get("/", async (req, res) => {
-  try {
-    const id = await randomId()
-    const character = await getCharacter(id)
-    res.send("<h1>Artisan Sky</h1>")
-  } catch (error) {
-    res.send(error)
-  }
+  res.send("<h1>Artisan Sky</h1>")
 })
 
 app.get("/:id", async (req, res) => {
