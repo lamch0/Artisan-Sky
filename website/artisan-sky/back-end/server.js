@@ -51,7 +51,7 @@ app.get("/", async (req, res) => {
   try {
     const id = await randomId()
     const character = await getCharacter(id)
-    res.send("<h1>Artisan's Sky</h1>")
+    res.send(character)
   } catch (error) {
     res.send(error)
   }
@@ -67,6 +67,6 @@ app.get("/:id", async (req, res) => {
   }
 })
 
-const port = 8080
+const port = process.env.PORT || 8080
 app.listen(port, () => console.log(`Listening on port ${port}`))
 
