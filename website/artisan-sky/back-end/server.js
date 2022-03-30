@@ -51,7 +51,7 @@ app.get("/", async (req, res) => {
   try {
     const id = await randomId()
     const character = await getCharacter(id)
-    res.send(character)
+    res.send("<h1>Artisan Sky</h1>")
   } catch (error) {
     res.send(error)
   }
