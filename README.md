@@ -20,14 +20,14 @@ Ng Chi Kit 1155142020
 ## Final Topic
 Products Platform
 
-##Backend functions
-Database related
+## Backend functions
+### Database related
+1. Password Mod
+2. Admin user password
+3. List all users
+Gordon Ryan
+### Not database related
 1. User signup
 2. User Login & Logout
-3. Password Mod
-4. Admin user password
-5. List all users
-Gordon Ryan
-Not database related
-1. Email Verification
-2. Profile Photo
+3. Email Verification
+4. Profile Photo
