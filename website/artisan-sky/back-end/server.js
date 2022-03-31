@@ -4,7 +4,7 @@ if(process.env.NODE_ENV !== 'production'){
 
 const express = require('express')
 const morgan = require('morgan')
-const mysql = require('mysql2')
+const mysql = require('mysql')
 const path = require('path');
 const app = express()
 const bcrypt = require('bcrypt')
@@ -12,6 +12,10 @@ const passport = require('passport')
 const flash = require('express-flash')
 const session = require('express-session')
 const methodOverride = require('method-override')
+const dotenv = require('dotenv')
+
+dotenv.config({ path: './.env'})
+
 
 const initializePassport = require('./pasport-config')
 initializePassport(
@@ -20,6 +24,21 @@ initializePassport(
   id => users.find(user => user.id === id)
 )
 
+const db = mysql.createConnection({
+  host: process.env.DATABASE_HOST, //if network put ip address
+  user: process.env.DATABASE_USER,
+  password: process.env.DATABASE_PASSWORD,
+  database: process.env.DATABASE,
+  socketPath: '/Applications/MAMP/tmp/mysql/mysql.sock'
+})
+
+db.connect( (error) => {
+  if(error){
+    console.log(error)
+  }else{
+    console.log("MYSQL Connected")
+  }
+} )
 const users = []
 
 app.use(morgan(":method :url :status :res[content-length] - :response-time ms"))
@@ -70,7 +89,12 @@ app.get("/test", (req, res) => {
   res.send("<h1>It's working 🤗</h1>")
 })
 
-app.get("/", checkAuthenticated, (req, res) => {
+app.get("/", (req, res) => {
+  //res.sendFile(path.join(__dirname, '/homepage.html'));
+  res.render('homepage.ejs')
+})
+
+app.get("/profile", checkAuthenticated, (req, res) => {
   //res.sendFile(path.join(__dirname, '/homepage.html'));
   res.render('index.ejs', { name : req.user.name })
 })
@@ -80,7 +104,7 @@ app.get("/login", checkNotAuthenticated, (req, res) => {
 })
 
 app.post('/login', checkNotAuthenticated, passport.authenticate('local', {
-  successRedirect: '/',
+  successRedirect: '/profile',
   failureRedirect: '/login',
   failureFlash: true
 
@@ -115,13 +139,12 @@ function checkAuthenticated(req, res, next){
   if (req.isAuthenticated()){
     return next()
   }
-
   res.redirect('/login')
 }
 
 function checkNotAuthenticated(req, res, next){
   if (req.isAuthenticated()){
-    return res.redirect('/')
+    return res.redirect('/profile')
   }
   next()
 }
