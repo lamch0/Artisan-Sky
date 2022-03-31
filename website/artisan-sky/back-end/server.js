@@ -23,6 +23,7 @@ initializePassport(
 const users = []
 
 app.use(morgan(":method :url :status :res[content-length] - :response-time ms"))
+app.set('views', './views');
 app.set('view-engine', 'ejs')
 app.use(express.urlencoded({ extended: false }))
 app.use(flash())
@@ -35,6 +36,7 @@ app.use(session({
 app.use(passport.initialize())
 app.use(passport.session())
 app.use(methodOverride('_method'))
+
 
 
 // https://gist.githubusercontent.com/meech-ward/1723b2df87eae8bb6382828fba649d64/raw/ee52637cc953df669d95bb4ab68ac2ad1a96cd9f/lotr.sql
