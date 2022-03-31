@@ -23,8 +23,8 @@ initializePassport(
 const users = []
 
 app.use(morgan(":method :url :status :res[content-length] - :response-time ms"))
-app.set('views', './views');
-app.set('view-engine', 'ejs')
+app.set('views', path.join(__dirname, "views"));
+app.set('view engine', 'ejs')
 app.use(express.urlencoded({ extended: false }))
 app.use(flash())
 app.use(session({
