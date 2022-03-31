@@ -25,10 +25,10 @@ Products Platform
 1. Password Mod
 2. Admin user password
 3. List all users
+4. Email Verification
 #### Gordon Ryan
 ### Not database related
 1. User signup
 2. User Login & Logout
-3. Email Verification
-4. Profile Photo
+3. Profile Photo
 #### Michael
