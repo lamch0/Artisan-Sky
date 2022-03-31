@@ -76,7 +76,7 @@ app.get("/", checkAuthenticated, (req, res) => {
 })
 
 app.get("/login", checkNotAuthenticated, (req, res) => {
-  res.render('login.ejs')
+  res.render('login')
 })
 
 app.post('/login', checkNotAuthenticated, passport.authenticate('local', {
