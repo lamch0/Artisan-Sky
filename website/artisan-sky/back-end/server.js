@@ -13,17 +13,11 @@ const flash = require('express-flash')
 const session = require('express-session')
 const methodOverride = require('method-override')
 const dotenv = require('dotenv')
+const initializePassport = require('./pasport-config');
 
 dotenv.config({ path: './.env'})
 
-
-const initializePassport = require('./pasport-config')
-initializePassport(
-  passport, 
-  email => users.find(user => user.email === email),
-  id => users.find(user => user.id === id)
-)
-
+//Make connection to MySQL database
 const db = mysql.createConnection({
   host: process.env.DATABASE_HOST, //if network put ip address
   user: process.env.DATABASE_USER,
@@ -31,7 +25,6 @@ const db = mysql.createConnection({
   database: process.env.DATABASE,
   socketPath: '/Applications/MAMP/tmp/mysql/mysql.sock'
 })
-
 db.connect( (error) => {
   if(error){
     console.log(error)
@@ -39,7 +32,10 @@ db.connect( (error) => {
     console.log("MYSQL Connected")
   }
 } )
-const users = []
+
+initializePassport(
+  passport 
+)
 
 app.use(morgan(":method :url :status :res[content-length] - :response-time ms"))
 app.set('views', path.join(__dirname, "views"));
@@ -56,85 +52,61 @@ app.use(passport.initialize())
 app.use(passport.session())
 app.use(methodOverride('_method'))
 
+//Parse URL-encoded bodies (as sent by HTML)
+app.use(express.urlencoded({ extended: false}))
+//Parse JSON bodies (as sent by API)
+app.use(express.json())
 
+//Define Routes, where app.get put in
+app.use('/', require('./routes/pages'))
 
-// https://gist.githubusercontent.com/meech-ward/1723b2df87eae8bb6382828fba649d64/raw/ee52637cc953df669d95bb4ab68ac2ad1a96cd9f/lotr.sql
-/*const pool = mysql.createPool({
-  host: process.env.MYSQL_HOST,
-  user: process.env.MYSQL_USER,
-  password: process.env.MYSQL_PASSWORD,
-  database: process.env.MYSQL_DATABASE,
-})
-
-function getRandomInt(max) {
-  return 1 + Math.floor(Math.random() * (max-1))
-}
-
-async function getCharacter(id) {
-  const [characters] = await pool.promise().query("SELECT * FROM characters WHERE id = ?", [
-    id,
-  ])
-  return characters[0]
-}
-async function randomId() {
-  const [rows] = await pool.promise().query(
-    "SELECT COUNT(*) as totalCharacters FROM characters"
-  )
-  const { totalCharacters } = rows[0]
-  const randomId = getRandomInt(totalCharacters)
-  return randomId
-}*/
-
-app.get("/test", (req, res) => {
-  res.send("<h1>It's working 🤗</h1>")
-})
-
-app.get("/", (req, res) => {
-  //res.sendFile(path.join(__dirname, '/homepage.html'));
-  res.render('homepage.ejs')
-})
-
-app.get("/profile", checkAuthenticated, (req, res) => {
-  //res.sendFile(path.join(__dirname, '/homepage.html'));
-  res.render('index.ejs', { name : req.user.name })
-})
-
-app.get("/login", checkNotAuthenticated, (req, res) => {
-  res.render('login')
-})
-
+//Get login input from user and base on information to redirect to other page
 app.post('/login', checkNotAuthenticated, passport.authenticate('local', {
   successRedirect: '/profile',
   failureRedirect: '/login',
   failureFlash: true
 
 }))
-
-app.get("/register", checkNotAuthenticated, (req, res) => {
-  res.render('register.ejs')
-})
-
+//Get register inforamtion and insert to MySQL database
 app.post('/register', checkNotAuthenticated, async (req, res) => {
   try {
-    const hashedPssword = await bcrypt.hash(req.body.password, 10)
-    users.push({
-      id: Date.now().toString(),
-      name: req.body.name,
-      email: req.body.email,
-      password: hashedPssword
+      const { name, email, password, passwordConfirm } = req.body
+      db.query('SELECT email FROM users WHERE email = ?', [email], async (error, results) =>{
+      if(error){
+          console.log(error)
+      }
+
+      if(results.length > 0){
+        req.flash('info', 'That email is already in use')
+        return res.render('register')
+      } else if(password !== passwordConfirm){
+        req.flash('info', 'Passwords do not match')
+        return res.render('register')
+      }
+      const hashedPassword = await bcrypt.hash(req.body.password, 10)
+      const id = Date.now().toString();
+      db.query('INSERT INTO users SET ?', {id: id, name: name, email: email, password: hashedPassword}, (error, results)=>{
+        if(error){
+            console.log(error)
+        }else{
+          console.log(req.body)
+          res.redirect('/login')
+        }
+      })
     })
-    res.redirect('/login')
+    
   } catch {
     res.redirect('/register')
   }
-  console.log(users)
 })
 
+//Get log out request 
 app.delete('/logout', (req, res) => {
   req.logOut()
   res.redirect('/login')
 })
 
+//Function to cheack if the user is authenticated if yes the continuse request, else stay in login page
 function checkAuthenticated(req, res, next){
   if (req.isAuthenticated()){
     return next()
@@ -142,6 +114,7 @@ function checkAuthenticated(req, res, next){
   res.redirect('/login')
 }
 
+//Function to make user don't go back to login or register page when they haven't log out
 function checkNotAuthenticated(req, res, next){
   if (req.isAuthenticated()){
     return res.redirect('/profile')
@@ -149,9 +122,9 @@ function checkNotAuthenticated(req, res, next){
   next()
 }
 
+//print what port we are listening
 const port = process.env.PORT || 8080
-var server = app.listen(port, () => {
-  const host = server.address().address
-  console.log(`Listening on http://${host}:${port}`)
+app.listen(port, () => {
+  console.log(`Listening on port:${port}`)
 })
 
