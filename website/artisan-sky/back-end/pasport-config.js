@@ -20,11 +20,11 @@ function initialize(passport){
                 console.log(error)
             }else{
                 const user = results
-                if (user == null){
+                if (user.length === 0){
                     return done(null, false, { message: "No user with that email!" })
                 }
                 try{
-                    if (await bcrypt.compare(password, results[0].password)){
+                    if (await bcrypt.compare(password, user[0].password)){
                         return done(null, user)
                     } else {
                         return done(null, false, { message: "Incorrect password!"})
