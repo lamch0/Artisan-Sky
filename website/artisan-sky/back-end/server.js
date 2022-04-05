@@ -13,7 +13,7 @@ const flash = require('express-flash')
 const session = require('express-session')
 const methodOverride = require('method-override')
 const dotenv = require('dotenv')
-const initializePassport = require('./pasport-config');
+const initializePassport = require('./passport-config');
 
 dotenv.config({ path: './.env'})
 
