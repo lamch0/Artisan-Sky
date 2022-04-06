@@ -14,6 +14,9 @@ const session = require('express-session')
 const methodOverride = require('method-override')
 const dotenv = require('dotenv')
 const initializePassport = require('./passport-config');
+const fileUpload = require('express-fileupload')
+const bodyParser = require('body-parser')
+
 
 dotenv.config({ path: './.env'})
 
@@ -23,7 +26,7 @@ const db = mysql.createConnection({
   user: process.env.DATABASE_USER,
   password: process.env.DATABASE_PASSWORD,
   database: process.env.DATABASE,
-  //socketPath: '/Applications/MAMP/tmp/mysql/mysql.sock'
+  socketPath: '/Applications/MAMP/tmp/mysql/mysql.sock'
 })
 db.connect( (error) => {
   if(error){
@@ -65,7 +68,6 @@ app.post('/login', checkNotAuthenticated, passport.authenticate('local', {
   successRedirect: '/profile',
   failureRedirect: '/login',
   failureFlash: true
-
 }))
 //Get register inforamtion and insert to MySQL database
 app.post('/register', checkNotAuthenticated, async (req, res) => {
@@ -89,6 +91,7 @@ app.post('/register', checkNotAuthenticated, async (req, res) => {
         if(error){
             console.log(error)
         }else{
+          //register success 
           console.log(req.body)
           res.redirect('/login')
         }
