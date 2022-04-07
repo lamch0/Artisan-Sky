@@ -135,7 +135,7 @@ app.post('/register', checkNotAuthenticated, async (req, res) => {
             password: hashedPassword
           })
           await newUser.save()
-          console.log(req.body)
+          //console.log(req.body)
           res.redirect('/login')
         } catch {
           console.log(error)
