@@ -26,8 +26,8 @@ mongoose.connect("mongodb+srv://artisansky:webuildappfromscratch@artisan.0mzss.m
   useNewUrlParser: true,
   useUnifiedTopology: true
 })
-//const user = require("./user_model.js")
-const userSchema = new mongoose.Schema({
+const user = require("./user_model")
+/*const userSchema = new mongoose.Schema({
   name: {
     type: String,
     require: true
@@ -48,8 +48,8 @@ const userSchema = new mongoose.Schema({
     type: String,
     default: 'images.png',
   }
-})
-const user = mongoose.model('user', userSchema)
+})*/
+//const user = mongoose.model('user', userSchema)
 
 const storage = multer.diskStorage({
   //destination for files
@@ -151,9 +151,7 @@ app.post('/register', checkNotAuthenticated, async (req, res) => {
 app.post('/profile', upload.single('profile_image'), checkAuthenticated, async (req, res) => {
   try{
     //console.log("req.session: "+ req.session.passport.user)
-
     let updateUser = await user.findOneAndUpdate({id: req.session.passport.user}, {profile_image: req.file.filename}, {new: true})
-    //console.log("updatedUser: "+updateUser)
     user_image = "/uploads/user_profile_images/" + updateUser.profile_image
     req.flash('info', user_image)
     return res.render('index')
