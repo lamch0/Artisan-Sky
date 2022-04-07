@@ -126,11 +126,10 @@ app.post('/register', checkNotAuthenticated, async (req, res) => {
 //app.put('/pwmod', (req, res) => {
 //app.put('/pwmod', passport.authenticate('local'), (req, res) => {
 app.put('/pwmod', checkAuthenticated, (req, res) => {
-  console.log("req: "+JSON.stringify(req.body))
-  user.findOne({email: req.body['email']},
+  console.log("User: "+ req.session.passport.user)
+  user.findOne({id: req.session.passport.user},
   (errUser, User) => {
     if (errUser || User == null){
-      req.flash('email', 'Email is incorrect')
       res.render('index')
     }
     else if (bcrypt.compare(User['password'], req.body['og_pw'])){
@@ -162,9 +161,10 @@ app.delete('/logout', (req, res) => {
 //Function to cheack if the user is authenticated if yes the continuse request, else stay in login page
 function checkAuthenticated(req, res, next){
   if (req.isAuthenticated()){
-    console.log("User authenticated " + JSON.stringify(req.user))
+    //console.log("User authenticated " + req.session.passport.user)
     return next()
   }
+  console.log("User not authenticated, returning to login")
   res.redirect('/login')
 }
 
@@ -174,6 +174,7 @@ function checkNotAuthenticated(req, res, next){
     console.log("User authenticated, returning to profile")
     return res.redirect('/profile')
   }
+  //console.log("User authenticated " + req.session.passport.user)
   next()
 }
 
