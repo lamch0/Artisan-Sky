@@ -11,7 +11,7 @@ function initialize(passport, getUserByEmail, getUserById){
             return done(null, false, { message: "No user with that email!" })
         }
         try{
-            console.log("user exists")
+            //console.log("user exists")
             if (await bcrypt.compare(password, user.password)){
                 return done(null, user)
             } else {

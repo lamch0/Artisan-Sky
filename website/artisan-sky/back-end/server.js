@@ -51,7 +51,7 @@ initializePassport(
   passport,
   async (email) => {
     const userFound = await user.findOne({ email: email });
-    console.log('userFound: '+ userFound)
+    //console.log('userFound: '+ userFound)
     return userFound;
   },
   async (id) => {
@@ -85,7 +85,7 @@ app.use('/', require('./routes/pages'))
 
 //Get login input from user and base on information to redirect to other page
 app.post('/login', checkNotAuthenticated, passport.authenticate('local', {
-  successRedirect: '/profile',
+  successRedirect: '/profile/',
   failureRedirect: '/login',
   failureFlash: true
 }))
@@ -123,29 +123,34 @@ app.post('/register', checkNotAuthenticated, async (req, res) => {
     res.redirect('/register')
   }
 })
-
-app.put('/pwmod', checkAuthenticated, async (req, res) => {
-  try {
-    user.findById('userObj_id',
-    (errUser, User) => {
-      if (errUser || User == null)
-        res.redirect(404, '/profile')
-      else if (bcrypt.compare(User['password'], req.body['og_pw'])){
-        User['password'] = await bcrypt.hash(req.body['new_pw'], 10)
-        User.save();
-        alert(req.flash('info', 'Successfully changed password'))
-        res.redirect('/profile')
-      }
-      else{
-        alert(req.flash('info', 'Original password incorrect!'))
-        res.redirect('/profile')
-      }
-    })
-  }
-  catch {
-    console.log(error)
-    res.redirect('/profile')
-  }
+//app.put('/pwmod', (req, res) => {
+//app.put('/pwmod', passport.authenticate('local'), (req, res) => {
+app.put('/pwmod', checkAuthenticated, (req, res) => {
+  console.log("req: "+JSON.stringify(req.body))
+  user.findOne({email: req.body['email']},
+  (errUser, User) => {
+    if (errUser || User == null){
+      req.flash('email', 'Email is incorrect')
+      res.render('index')
+    }
+    else if (bcrypt.compare(User['password'], req.body['og_pw'])){
+      bcrypt.hash(req.body['new_pw'], 10, (err, hash) => {
+        if (err)
+          res.render(index)
+        else {
+          //User['password'] = req.body['new_pw']
+          User['password'] = hash;
+          User.save();
+          req.flash('success', 'Successfully changed password')
+          res.redirect('/profile')
+        }
+      })
+    }
+    else{
+      req.flash('og_pw', 'Original password is incorrect')
+      res.redirect('/profile')
+    }
+  })
 })
 
 //Get log out request 
@@ -157,6 +162,7 @@ app.delete('/logout', (req, res) => {
 //Function to cheack if the user is authenticated if yes the continuse request, else stay in login page
 function checkAuthenticated(req, res, next){
   if (req.isAuthenticated()){
+    console.log("User authenticated " + JSON.stringify(req.user))
     return next()
   }
   res.redirect('/login')
@@ -165,6 +171,7 @@ function checkAuthenticated(req, res, next){
 //Function to make user don't go back to login or register page when they haven't log out
 function checkNotAuthenticated(req, res, next){
   if (req.isAuthenticated()){
+    console.log("User authenticated, returning to profile")
     return res.redirect('/profile')
   }
   next()
