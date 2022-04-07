@@ -4,11 +4,21 @@
 <body>
     <h1>Artisan's Sky</h1>
     <h2>Hi</h2>
-    <form action="/pwmod" method="GET">
-        <button type="submit">Change password</button>
+    <% if (messages.info) { %>
+        <img src=<%=messages.info%> alt="/uploads/user_profile_images/images.png" style="width: 60px; height: 60px;"/>
+    <% } %>
+    <form action="/profile" method="POST" enctype="multipart/form-data">
+       
+        <div>
+            <label for="profile_image">Upload profile picture: </label>
+            <input type="file" name="profile_image" id="profile_image">
+        </div>
+        <div>
+            <button type="submit">Save</button>
+        </div>
     </form>
-    <!-- <form action="/pwmod?_method=PUT" method = "POST">
-        <label for="email">Enter email</label><br/>
+    <form action="/pwmod?_method=PUT" method = "POST">
+        <!-- <label for="email">Enter email</label><br/>
         <input type="email" id="email" name="email"><br/>
         <% if (messages.email) { %>
             <%= messages.email %>

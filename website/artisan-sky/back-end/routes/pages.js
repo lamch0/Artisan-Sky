@@ -3,6 +3,12 @@
 //
 const express = require('express')
 const router = express.Router()
+const mongoose = require('mongoose');
+mongoose.connect("mongodb+srv://artisansky:webuildappfromscratch@artisan.0mzss.mongodb.net/Artisan?retryWrites=true&w=majority", {
+  useNewUrlParser: true,
+  useUnifiedTopology: true
+})
+const user = require("../user_model")
 
 
 router.get('/pwmod', checkAuthenticated, (req,res) => {
@@ -17,7 +23,10 @@ router.get("/", (req, res) => {
     res.render('homepage.ejs')
 })
 
-router.get("/profile",  checkAuthenticated, (req, res) => {
+router.get("/profile",  checkAuthenticated, async (req, res) => {
+    const updateUser = await user.findOne({id: req.session.passport.user})
+    user_image = "/uploads/user_profile_images/" + updateUser.profile_image
+    req.flash('info', user_image)
     res.render('index.ejs')
 })
 
