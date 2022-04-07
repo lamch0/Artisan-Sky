@@ -16,12 +16,21 @@ const dotenv = require('dotenv')
 const initializePassport = require('./passport-config');
 const fileUpload = require('express-fileupload')
 const bodyParser = require('body-parser')
-
+const mongoose = require('mongoose');
 
 dotenv.config({ path: './.env'})
 
+//Make connection to mongodb
+mongoose.connect("mongodb+srv://artisansky:webuildappfromscratch@artisan.0mzss.mongodb.net/Artisan?retryWrites=true&w=majority", {
+  useNewUrlParser: true,
+  useUnifiedTopology: true
+})
+const user = require("./user_model.js")
+
+
+
 //Make connection to MySQL database
-const db = mysql.createConnection({
+/*const db = mysql.createConnection({
   host: process.env.DATABASE_HOST, //if network put ip address
   user: process.env.DATABASE_USER,
   password: process.env.DATABASE_PASSWORD,
@@ -34,10 +43,19 @@ db.connect( (error) => {
   }else{
     console.log("MYSQL Connected")
   }
-} )
+})*/
 
 initializePassport(
-  passport 
+  passport,
+  async (email) => {
+    const userFound = await user.findOne({ email: email });
+    console.log('userFound: '+ userFound)
+    return userFound;
+  },
+  async (id) => {
+    const userFound = await user.findOne({ id: id });
+    return userFound;
+  }
 )
 
 app.use(morgan(":method :url :status :res[content-length] - :response-time ms"))
@@ -70,7 +88,7 @@ app.post('/login', checkNotAuthenticated, passport.authenticate('local', {
   failureFlash: true
 }))
 //Get register inforamtion and insert to MySQL database
-app.post('/register', checkNotAuthenticated, async (req, res) => {
+/*app.post('/register', checkNotAuthenticated, async (req, res) => {
   try {
       const { name, email, password, passwordConfirm } = req.body
       db.query('SELECT email FROM users WHERE email = ?', [email], async (error, results) =>{
@@ -101,8 +119,37 @@ app.post('/register', checkNotAuthenticated, async (req, res) => {
   } catch {
     res.redirect('/register')
   }
+})*/
+app.post('/register', checkNotAuthenticated, async (req, res) => {
+  try {
+      const { name, email, password, passwordConfirm } = req.body
+      const userExists = await user.findOne({ email: email})
+      if(userExists){
+        req.flash('info', 'That email is already in use')
+        return res.render('register')
+      } else {
+        try{
+          const hashedPassword = await bcrypt.hash(password, 10)
+          const id = Date.now().toString();
+          const newUser = new user({
+            name: name,
+            email: email,
+            id: id,
+            password: hashedPassword
+          })
+          await newUser.save()
+          console.log(req.body)
+          res.redirect('/login')
+        } catch{
+          console.log(error)
+          res.redirect('/register')
+        }
+      }
+  } catch {
+    console.log(error)
+    res.redirect('/register')
+  }
 })
-
 //Get log out request 
 app.delete('/logout', (req, res) => {
   req.logOut()
