@@ -4,7 +4,6 @@ if(process.env.NODE_ENV !== 'production'){
 
 const express = require('express')
 const morgan = require('morgan')
-const mysql = require('mysql')
 const path = require('path');
 const app = express()
 const bcrypt = require('bcrypt')
@@ -25,25 +24,27 @@ mongoose.connect("mongodb+srv://artisansky:webuildappfromscratch@artisan.0mzss.m
   useNewUrlParser: true,
   useUnifiedTopology: true
 })
-const user = require("./user_model.js")
-
-
-
-//Make connection to MySQL database
-/*const db = mysql.createConnection({
-  host: process.env.DATABASE_HOST, //if network put ip address
-  user: process.env.DATABASE_USER,
-  password: process.env.DATABASE_PASSWORD,
-  database: process.env.DATABASE,
-  socketPath: '/Applications/MAMP/tmp/mysql/mysql.sock'
-})
-db.connect( (error) => {
-  if(error){
-    console.log(error)
-  }else{
-    console.log("MYSQL Connected")
+//const user = require("./user_model.js")
+const userSchema = new mongoose.Schema({
+  name: {
+    type: String,
+    require: true
+  },
+  id: {
+    type: String,
+    require: true
+  },
+  email: {
+    type: String,
+    require: true
+  },
+  password: {
+    type: String,
+    require: true
   }
-})*/
+})
+const user = mongoose.model('user', userSchema)
+
 
 initializePassport(
   passport,
@@ -87,39 +88,7 @@ app.post('/login', checkNotAuthenticated, passport.authenticate('local', {
   failureRedirect: '/login',
   failureFlash: true
 }))
-//Get register inforamtion and insert to MySQL database
-/*app.post('/register', checkNotAuthenticated, async (req, res) => {
-  try {
-      const { name, email, password, passwordConfirm } = req.body
-      db.query('SELECT email FROM users WHERE email = ?', [email], async (error, results) =>{
-      if(error){
-          console.log(error)
-      }
 
-      if(results.length > 0){
-        req.flash('info', 'That email is already in use')
-        return res.render('register')
-      } else if(password !== passwordConfirm){
-        req.flash('info', 'Passwords do not match')
-        return res.render('register')
-      }
-      const hashedPassword = await bcrypt.hash(req.body.password, 10)
-      const id = Date.now().toString();
-      db.query('INSERT INTO users SET ?', {id: id, name: name, email: email, password: hashedPassword}, (error, results)=>{
-        if(error){
-            console.log(error)
-        }else{
-          //register success 
-          console.log(req.body)
-          res.redirect('/login')
-        }
-      })
-    })
-    
-  } catch {
-    res.redirect('/register')
-  }
-})*/
 app.post('/register', checkNotAuthenticated, async (req, res) => {
   try {
       const { name, email, password, passwordConfirm } = req.body
@@ -127,7 +96,10 @@ app.post('/register', checkNotAuthenticated, async (req, res) => {
       if(userExists){
         req.flash('info', 'That email is already in use')
         return res.render('register')
-      } else {
+      } else if(password !== passwordConfirm){
+        req.flash('info', 'Passwords do not match')
+        return res.render('register')
+      }else {
         try{
           const hashedPassword = await bcrypt.hash(password, 10)
           const id = Date.now().toString();
