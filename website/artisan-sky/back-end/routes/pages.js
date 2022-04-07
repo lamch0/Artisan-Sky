@@ -4,6 +4,11 @@
 const express = require('express')
 const router = express.Router()
 
+
+router.get('/pwmod', checkAuthenticated, (req,res) => {
+    res.render('passwordmod')  
+  })
+
 router.get("/test", (req, res) => {
     res.send("<h1>It's working 🤗</h1>")
 })

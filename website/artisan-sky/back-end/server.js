@@ -123,34 +123,49 @@ app.post('/register', checkNotAuthenticated, async (req, res) => {
     res.redirect('/register')
   }
 })
+
 //app.put('/pwmod', (req, res) => {
 //app.put('/pwmod', passport.authenticate('local'), (req, res) => {
-app.put('/pwmod', checkAuthenticated, (req, res) => {
-  console.log("User: "+ req.session.passport.user)
-  user.findOne({id: req.session.passport.user},
-  (errUser, User) => {
-    if (errUser || User == null){
-      res.render('index')
-    }
-    else if (bcrypt.compare(User['password'], req.body['og_pw'])){
-      bcrypt.hash(req.body['new_pw'], 10, (err, hash) => {
-        if (err)
-          res.render(index)
-        else {
-          //User['password'] = req.body['new_pw']
-          User['password'] = hash;
-          User.save();
-          req.flash('success', 'Successfully changed password')
-          res.redirect('/profile')
+app.put('/pwmod', checkAuthenticated, 
+  (req, res) => {
+    console.log("User: "+ req.session.passport.user)
+    console.log(req.body)
+    user.findOne({id: req.session.passport.user},
+      (errUser, User) => {
+        //console.log(User)
+        if (errUser || User == null){
+          res.render('passwordmod')
         }
-      })
-    }
-    else{
-      req.flash('og_pw', 'Original password is incorrect')
-      res.redirect('/profile')
-    }
-  })
-})
+        else (bcrypt.compare(req.body['og_pw'], User['password'], 
+          (err, eq) => {
+            //console.log(eq)
+            if (err)
+              res.render('passwordmod')
+            if (eq) {
+              bcrypt.hash(req.body['new_pw'], 10, 
+                (err, hash) => {
+                  if (err)
+                    res.render('passwordmod')
+                  else {
+                    //User['password'] = req.body['new_pw']
+                    User['password'] = hash;
+                    User.save();
+                    req.flash('success', 'Successfully changed password')
+                    res.render('passwordmod')
+                  }
+                }
+              )
+            }
+            else {
+              req.flash('og_pw', 'Original password is incorrect')
+              res.render('passwordmod')
+            }
+          }
+        ))
+      }
+    )
+  }
+)
 
 //Get log out request 
 app.delete('/logout', (req, res) => {
