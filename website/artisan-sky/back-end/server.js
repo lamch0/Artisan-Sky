@@ -17,6 +17,7 @@ const fileUpload = require('express-fileupload')
 const bodyParser = require('body-parser')
 const mongoose = require('mongoose');
 const { runInNewContext } = require('vm');
+const multer =require('multer')
 
 dotenv.config({ path: './.env'})
 
@@ -42,10 +43,33 @@ const userSchema = new mongoose.Schema({
   password: {
     type: String,
     require: true
+  },
+  profile_image: {
+    type: String,
+    default: 'images.png',
   }
 })
 const user = mongoose.model('user', userSchema)
 
+const storage = multer.diskStorage({
+  //destination for files
+  destination: function (req, file, callback) {
+   callback(null, 'public/uploads/user_profile_images')
+ },
+ //add back extension
+ filename: function (req, file, callback) {
+   //console.log(file)
+   callback(null, Date.now() + file.originalname)
+ }
+})
+
+//upload parameters for multer
+const upload = multer({
+ storage: storage,
+ limits: {
+   fieldSize: 1024 * 1024 * 3,
+ }
+})
 
 initializePassport(
   passport,
@@ -67,14 +91,14 @@ app.use(express.urlencoded({ extended: false }))
 app.use(flash())
 app.use(session({
   secret: process.env.SESSION_SECRET,
-  resave: false,
-  saveUninitialized: false
-
+  resave: true,
+  saveUninitialized: false,
+  name: 'userInSession'
 }))
 app.use(passport.initialize())
 app.use(passport.session())
 app.use(methodOverride('_method'))
-
+app.use(express.static( "public" ))
 //Parse URL-encoded bodies (as sent by HTML)
 app.use(express.urlencoded({ extended: false}))
 //Parse JSON bodies (as sent by API)
@@ -85,7 +109,7 @@ app.use('/', require('./routes/pages'))
 
 //Get login input from user and base on information to redirect to other page
 app.post('/login', checkNotAuthenticated, passport.authenticate('local', {
-  successRedirect: '/profile/',
+  successRedirect: '/profile',
   failureRedirect: '/login',
   failureFlash: true
 }))
@@ -123,6 +147,21 @@ app.post('/register', checkNotAuthenticated, async (req, res) => {
     res.redirect('/register')
   }
 })
+
+app.post('/profile', upload.single('profile_image'), checkAuthenticated, async (req, res) => {
+  try{
+    //console.log("req.session: "+ req.session.passport.user)
+
+    let updateUser = await user.findOneAndUpdate({id: req.session.passport.user}, {profile_image: req.file.filename}, {new: true})
+    //console.log("updatedUser: "+updateUser)
+    user_image = "/uploads/user_profile_images/" + updateUser.profile_image
+    req.flash('info', user_image)
+    return res.render('index')
+  } catch (error){
+    console.log(error)
+    res.redirect('/profile')
+  }
+})
 //app.put('/pwmod', (req, res) => {
 //app.put('/pwmod', passport.authenticate('local'), (req, res) => {
 app.put('/pwmod', checkAuthenticated, (req, res) => {
@@ -154,6 +193,9 @@ app.put('/pwmod', checkAuthenticated, (req, res) => {
 
 //Get log out request 
 app.delete('/logout', (req, res) => {
+  req.session.destroy(() => {
+    console.log('session destroyed')
+  })
   req.logOut()
   res.redirect('/login')
 })
