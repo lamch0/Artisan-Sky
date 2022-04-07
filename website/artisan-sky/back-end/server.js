@@ -16,6 +16,7 @@ const initializePassport = require('./passport-config');
 const fileUpload = require('express-fileupload')
 const bodyParser = require('body-parser')
 const mongoose = require('mongoose');
+const { runInNewContext } = require('vm');
 
 dotenv.config({ path: './.env'})
 
@@ -112,7 +113,7 @@ app.post('/register', checkNotAuthenticated, async (req, res) => {
           await newUser.save()
           console.log(req.body)
           res.redirect('/login')
-        } catch{
+        } catch {
           console.log(error)
           res.redirect('/register')
         }
@@ -122,6 +123,31 @@ app.post('/register', checkNotAuthenticated, async (req, res) => {
     res.redirect('/register')
   }
 })
+
+app.put('/pwmod', checkAuthenticated, async (req, res) => {
+  try {
+    user.findById('userObj_id',
+    (errUser, User) => {
+      if (errUser || User == null)
+        res.redirect(404, '/profile')
+      else if (bcrypt.compare(User['password'], req.body['og_pw'])){
+        User['password'] = await bcrypt.hash(req.body['new_pw'], 10)
+        User.save();
+        alert(req.flash('info', 'Successfully changed password'))
+        res.redirect('/profile')
+      }
+      else{
+        alert(req.flash('info', 'Original password incorrect!'))
+        res.redirect('/profile')
+      }
+    })
+  }
+  catch {
+    console.log(error)
+    res.redirect('/profile')
+  }
+})
+
 //Get log out request 
 app.delete('/logout', (req, res) => {
   req.logOut()

@@ -4,6 +4,15 @@
 <body>
     <h1>Artisan's Sky</h1>
     <h2>Hi</h2>
+    <form action="/pwmod?_method=PUT" method = "POST">
+        <label for="og_pw">Enter original password</label>
+        <input type="text" id="og_pw" name="og_pw">
+
+        <label for="new_pw">Enter new password</label>
+        <input type="text" id="new_pw" name="new_pw">
+
+        <button type="submit">Change Password</button>
+    </form>
     <form action="/logout?_method=DELETE" method = "POST">
         <button type="submit">Log Out</button>
     </form>
