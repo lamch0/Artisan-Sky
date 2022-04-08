@@ -7,7 +7,8 @@ const userSchema = new mongoose.Schema({
     },
     id: {
       type: String,
-      require: true
+      require: true,
+      unique: true
     },
     email: {
       type: String,
@@ -24,6 +25,10 @@ const userSchema = new mongoose.Schema({
     verfied: {
       type: Boolean,
       default: false,
+    },
+    user_type: {
+      type: String,
+      default: 'user'
     }
   })
 

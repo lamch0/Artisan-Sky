@@ -27,6 +27,7 @@ mongoose.connect("mongodb+srv://artisansky:webuildappfromscratch@artisan.0mzss.m
   useUnifiedTopology: true
 })
 const user = require("./user_model")
+//const admin = require("./admin_model")
 /*const userSchema = new mongoose.Schema({
   name: {
     type: String,
@@ -110,6 +111,15 @@ initializePassport(
   }
 )
 
+// initializeAdminPassport(
+//     passport,
+//     async (id) => {
+//       const adminFound = await admin.findOne({id: id});
+//       return adminFound;
+//   }
+// )
+
+
 app.use(morgan(":method :url :status :res[content-length] - :response-time ms"))
 app.set('views', path.join(__dirname, "views"));
 app.set('view engine', 'ejs')
@@ -122,6 +132,7 @@ app.use(session({
   name: 'userInSession'
 }))
 app.use(passport.initialize())
+//app.use(passport.admininitialize())
 app.use(passport.session())
 app.use(methodOverride('_method'))
 app.use(express.static( "public" ))
@@ -140,6 +151,12 @@ app.post('/login', checkNotAuthenticated, passport.authenticate('local', {
   failureFlash: true
 }))
 
+// app.post('/adminlogin', checkAdminNotAuthenticated, passport.authenticate('local', {
+//   successRedirect: '/adminprofile',
+//   failureRedirect: '/adminlogin',
+//   failureFlash: true
+// }))
+
 app.post('/register', checkNotAuthenticated, async (req, res) => {
   try {
       const { name, email, password, passwordConfirm } = req.body
@@ -147,10 +164,10 @@ app.post('/register', checkNotAuthenticated, async (req, res) => {
       if(userExists){
         req.flash('info', 'That email is already in use')
         return res.render('register')
-      } else if(password !== passwordConfirm){
+      } else if (password !== passwordConfirm){
         req.flash('info', 'Passwords do not match')
         return res.render('register')
-      }else {
+      } else {
         try{
           const hashedPassword = await bcrypt.hash(password, 10)
           const id = Date.now().toString();
@@ -310,6 +327,20 @@ app.post('/profile', upload.single('profile_image'), checkAuthenticated, async (
     res.redirect('/profile')
   }
 })
+
+app.post('/adminprofile', upload.single('profile_image'), checkAuthenticated, async (req, res) => {
+  try{
+    let updateUser = await user.findOneAndUpdate({id: req.session.passport.user}, {profile_image: req.file.filename}, {new: true})
+      user_image = "/uploads/user_profile_images/" + updateUser.profile_image
+      req.flash('info', user_image)
+      return res.render('index')
+    } catch (error){
+      console.log(error)
+      res.redirect('/profile')
+    }
+})
+
+//changes password of normal user from passwordmod.ejs
 //app.put('/pwmod', (req, res) => {
 //app.put('/pwmod', passport.authenticate('local'), (req, res) => {
 app.put('/pwmod', checkAuthenticated, 
@@ -381,6 +412,22 @@ function checkNotAuthenticated(req, res, next){
   //console.log("User authenticated " + req.session.passport.user)
   next()
 }
+
+// function checkAdminAuthenticated(req,res,next){
+//   if (req.isAuthenticated()){
+//     return next()
+//   }
+//   console.log("Admin not authenticated, returning to login")
+//   res.redirect('/adminlogin')
+// }
+
+// function checkAdminNotAuthenticated(req,res,next){
+//   if (req.isAuthenticated()){
+//     console.log("Admin authenticated, returning to admin profile")
+//     return res.redirect('/adminprofile')
+//   }
+//   next()
+// }
 
 //print what port we are listening
 const port = process.env.PORT || 8080
