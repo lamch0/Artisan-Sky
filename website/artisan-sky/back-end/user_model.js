@@ -22,10 +22,10 @@ const userSchema = new mongoose.Schema({
       type: String,
       default: 'images.png',
     },
-    verfied: {
-      type: Boolean,
-      default: false,
-    },
+    // verfied: {
+    //   type: Boolean,
+    //   default: false,
+    // },
     user_type: {
       type: String,
       default: 'user'

@@ -38,13 +38,13 @@ router.get("/profile",  checkAuthenticated, async (req, res) => {
     }
 })
 
-router.get("/profile",  checkAuthenticated, async (req, res) => {
-    const updateUser = await user.findOne({id: req.session.passport.user})
-    // console.log(updateUser)
-    var user_image = "/uploads/user_profile_images/" + updateUser.profile_image
-    req.flash('info', user_image)
-    res.render('index.ejs')
-})
+// router.get("/profile",  checkAuthenticated, async (req, res) => {
+//     const updateUser = await user.findOne({id: req.session.passport.user})
+//     // console.log(updateUser)
+//     var user_image = "/uploads/user_profile_images/" + updateUser.profile_image
+//     req.flash('info', user_image)
+//     res.render('index.ejs')
+// })
 
 router.get("/adminprofile", checkAuthenticated, async (req, res) => {
     res.render('adminIndex.ejs')
