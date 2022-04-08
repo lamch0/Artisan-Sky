@@ -12,10 +12,14 @@ function initialize(passport, getUserByEmail, getUserById){
         }
         try{
             //console.log("user exists")
-            if (await bcrypt.compare(password, user.password)){
-                return done(null, user)
+            if (!user[0].verified) {
+                return done(null, false, { message: "Not yet verified!"})
             } else {
-                return done(null, false, { message: "Incorrect password!"})
+                if (await bcrypt.compare(password, user.password)){
+                    return done(null, user)
+                } else {
+                    return done(null, false, { message: "Incorrect password!"})
+                }
             }
         } catch(error) {
             return done(error)

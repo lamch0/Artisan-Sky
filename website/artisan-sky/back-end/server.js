@@ -75,7 +75,6 @@ transporter.verify((err, e)=>{
     console.log(err);
   } else {
     console.log("ready for messages");
-    console.log(e);
   }
 })
 const storage = multer.diskStorage({
@@ -182,10 +181,8 @@ app.post('/register', checkNotAuthenticated, async (req, res) => {
 
 // send verification email
 const sendVeriEmail = ({_id, email}, res) => {
-  // url 
   const currentUrl = "/register/"
   const uniqueString = uuidv4() + _id;
-
   // mail options
   const mailOptions= {
     from: process.env.AUTH,
@@ -193,35 +190,113 @@ const sendVeriEmail = ({_id, email}, res) => {
     subject: "Verify Your Email from Artisan Sky",
     html: `<p>Verify your email address to complete the signup and login into your Artisan Sky account.</p><p>This link <b>expires in 15 minutes</b>.</p><p>Press <a href=${currentUrl + "user/verify/" + _id + "/" + uniqueString}>here</a> to proceed.</p>`, 
   };
-
   // hashing the unique string
   const saltRounds = 10;
   bcrypt.hash(uniqueString, saltRounds)
-  .then((hashedUniqueString)=>{
-    const newVeri = new UserVerification({
-      userId: _id,
-      uniqueString: hashedUniqueString,
-      createdAt: Date.now(),
-      expiresAt: Date.now() + 900
-    });
-    newVeri.save()
-    .then(()=>{
-      transporter.sendMail(mailOptions)
-      .catch((err)=>{
-        console.log(err)
-        res.status(404).send("Error of verification email");  
+    .then((hashedUniqueString)=>{
+      const newVeri = new UserVerification({
+        userId: _id,
+        uniqueString: hashedUniqueString,
+        createdAt: Date.now(),
+        expiresAt: Date.now() + 900
+      });
+      newVeri.save()
+      .then(()=>{
+        transporter.sendMail(mailOptions)
+        .then(()=>{
+          res.json({
+            status: "Pending"
+          })
+        })
+        .catch((err)=>{
+          console.log(err)
+          res.status(404).send("Error of verification email");  
+        })
+        
       })
-      
+      .catch((err)=>{
+        console.log(err);
+        res.status(404).send("Error while saving verfi email data");
+      })
     })
     .catch((err)=>{
-      console.log(err);
-      res.status(404).send("Error while saving verfi email data");
+      res.status(404).send("Error while hashing data");
     })
+}
+
+
+// verify email
+app.get("/verify/:userId/:uniqueString", (req,res) => {
+  let {userId, uniqueString} = req.params;
+  UserVerification.find({userId})
+  .then((result) => {
+    if (result.length > 0){
+      const {expiresAt} = result[0];
+      const hashedUniqueString = result[0].uniqueString;
+      if (expiresAt < Date.now()) {
+        UserVerification.deleteOne({userId})
+        .then(result=>{
+          user.deleteOne({_id: userId})
+          .then(()=>{
+            let msg = "Please sign up again."
+            res.redirect(`/user/verified/error=true&message=${msg}`);
+          })
+          .catch((err)=>{
+            let msg = "Deleting user..."
+            res.redirect(`/user/verified/error=true&message=${msg}`);
+          })
+        })
+        .catch((err)=>{
+          console.log(err);
+          let msg = "Error because the email verification expired"
+          res.redirect(`/user/verified/error=true&message=${msg}`);
+        })
+      } else {
+        bcrypt.compare(uniqueString, hashedUniqueString)
+        .then((result)=>{
+          if (result) {
+            user.updateOne({_id:userId}, {verified:true})
+            .then(()=>{
+              UserVerification.deleteOne({userId})
+              .then(()=>{
+                res.sendFile(path.join(__dirname, "./views/verified.ejs"))
+              })
+              .catch((err)=>{
+                console.log(err);
+                let msg = "Error at the last step"
+                res.redirect(`/user/verified/error=true&message=${msg}`);  
+              })
+            })
+            .catch((err)=>{
+              console.log(err);
+              let msg = "Error while updating record"
+              res.redirect(`/user/verified/error=true&message=${msg}`);  
+            })
+          } else {
+            let msg = "Invalid verification details. Click the link again"
+            res.redirect(`/user/verified/error=true&message=${msg}`);  
+          }
+        })
+        .catch((err)=>{
+          let msg = "Error while comparing unique string"
+          res.redirect(`/user/verified/error=true&message=${msg}`);  
+        })
+      }
+    } else {
+      let msg = "Verified already or account record does not exist. Please signup or login."
+      res.redirect(`/user/verified/error=true&message=${msg}`);  
+    }
   })
   .catch((err)=>{
-    res.status(404).send("Error while hashing data");
+    console.log(err)
+    let msg = "Error while checking for existing user verification record"
+    res.redirect(`/user/verified/error=true&message=${msg}`);
   })
-};
+})
+
+app.get("/verified", (req, res) => {
+  res.sendFile(path.join(__dirname, "./views/verified.ejs"));
+})
 
 app.post('/profile', upload.single('profile_image'), checkAuthenticated, async (req, res) => {
   try{
