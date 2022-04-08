@@ -20,6 +20,10 @@ const userSchema = new mongoose.Schema({
     profile_image: {
       type: String,
       default: 'images.png',
+    },
+    verfied: {
+      type: Boolean,
+      default: false,
     }
   })
 

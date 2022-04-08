@@ -51,6 +51,33 @@ const user = require("./user_model")
 })*/
 //const user = mongoose.model('user', userSchema)
 
+// User Verification model
+const UserVerification = require("./UserVerification");
+
+// email handler
+const nodemailer = require("nodemailer");
+
+// unique String
+const {v4: uuidv4} = require("uuid");
+
+// nodemailer
+let transporter = nodemailer.createTransport({
+  service: "gmail",
+  auth:{
+    user: process.env.AUTH_EMAIL,
+    pass: process.env.AUTH_PASS,
+  }
+})
+
+// testing success
+transporter.verify((err, e)=>{
+  if (err) {
+    console.log(err);
+  } else {
+    console.log("ready for messages");
+    console.log(e);
+  }
+})
 const storage = multer.diskStorage({
   //destination for files
   destination: function (req, file, callback) {
@@ -132,10 +159,15 @@ app.post('/register', checkNotAuthenticated, async (req, res) => {
             name: name,
             email: email,
             id: id,
-            password: hashedPassword
+            password: hashedPassword,
+            verified: false,
           })
           await newUser.save()
           //console.log(req.body)
+          .then((result)=>{
+            // email verification
+            sendVeriEmail(result, res);
+          })
           res.redirect('/login')
         } catch {
           console.log(error)
@@ -147,6 +179,49 @@ app.post('/register', checkNotAuthenticated, async (req, res) => {
     res.redirect('/register')
   }
 })
+
+// send verification email
+const sendVeriEmail = ({_id, email}, res) => {
+  // url 
+  const currentUrl = "/register/"
+  const uniqueString = uuidv4() + _id;
+
+  // mail options
+  const mailOptions= {
+    from: process.env.AUTH,
+    to: email,
+    subject: "Verify Your Email from Artisan Sky",
+    html: `<p>Verify your email address to complete the signup and login into your Artisan Sky account.</p><p>This link <b>expires in 15 minutes</b>.</p><p>Press <a href=${currentUrl + "user/verify/" + _id + "/" + uniqueString}>here</a> to proceed.</p>`, 
+  };
+
+  // hashing the unique string
+  const saltRounds = 10;
+  bcrypt.hash(uniqueString, saltRounds)
+  .then((hashedUniqueString)=>{
+    const newVeri = new UserVerification({
+      userId: _id,
+      uniqueString: hashedUniqueString,
+      createdAt: Date.now(),
+      expiresAt: Date.now() + 900
+    });
+    newVeri.save()
+    .then(()=>{
+      transporter.sendMail(mailOptions)
+      .catch((err)=>{
+        console.log(err)
+        res.status(404).send("Error of verification email");  
+      })
+      
+    })
+    .catch((err)=>{
+      console.log(err);
+      res.status(404).send("Error while saving verfi email data");
+    })
+  })
+  .catch((err)=>{
+    res.status(404).send("Error while hashing data");
+  })
+};
 
 app.post('/profile', upload.single('profile_image'), checkAuthenticated, async (req, res) => {
   try{
