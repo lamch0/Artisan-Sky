@@ -75,7 +75,6 @@ transporter.verify((err, e)=>{
     console.log(err);
   } else {
     console.log("ready for messages");
-    console.log(e);
   }
 })
 const storage = multer.diskStorage({
@@ -180,56 +179,55 @@ app.post('/register', checkNotAuthenticated, async (req, res) => {
   }
 })
 
-// path for verified page
-const path = require("path");
-
 // send verification email
 const sendVeriEmail = ({_id, email}, res) => {
-// url 
-const currentUrl = "/register/"
-const uniqueString = uuidv4() + _id;
-
-// mail options
-const mailOptions= {
-  from: process.env.AUTH,
-  to: email,
-  subject: "Verify Your Email from Artisan Sky",
-  html: `<p>Verify your email address to complete the signup and login into your Artisan Sky account.</p><p>This link <b>expires in 15 minutes</b>.</p><p>Press <a href=${currentUrl + "user/verify/" + _id + "/" + uniqueString}>here</a> to proceed.</p>`, 
-};
-
-// hashing the unique string
-const saltRounds = 10;
-bcrypt.hash(uniqueString, saltRounds)
-  .then((hashedUniqueString)=>{
-    const newVeri = new UserVerification({
-      userId: _id,
-      uniqueString: hashedUniqueString,
-      createdAt: Date.now(),
-      expiresAt: Date.now() + 900
-    });
-    newVeri.save()
-    .then(()=>{
-      transporter.sendMail(mailOptions)
-      .catch((err)=>{
-        console.log(err)
-        res.status(404).send("Error of verification email");  
+  const currentUrl = "/register/"
+  const uniqueString = uuidv4() + _id;
+  // mail options
+  const mailOptions= {
+    from: process.env.AUTH,
+    to: email,
+    subject: "Verify Your Email from Artisan Sky",
+    html: `<p>Verify your email address to complete the signup and login into your Artisan Sky account.</p><p>This link <b>expires in 15 minutes</b>.</p><p>Press <a href=${currentUrl + "user/verify/" + _id + "/" + uniqueString}>here</a> to proceed.</p>`, 
+  };
+  // hashing the unique string
+  const saltRounds = 10;
+  bcrypt.hash(uniqueString, saltRounds)
+    .then((hashedUniqueString)=>{
+      const newVeri = new UserVerification({
+        userId: _id,
+        uniqueString: hashedUniqueString,
+        createdAt: Date.now(),
+        expiresAt: Date.now() + 900
+      });
+      newVeri.save()
+      .then(()=>{
+        transporter.sendMail(mailOptions)
+        .then(()=>{
+          res.json({
+            status: "Pending"
+          })
+        })
+        .catch((err)=>{
+          console.log(err)
+          res.status(404).send("Error of verification email");  
+        })
+        
       })
-      
+      .catch((err)=>{
+        console.log(err);
+        res.status(404).send("Error while saving verfi email data");
+      })
     })
     .catch((err)=>{
-      console.log(err);
-      res.status(404).send("Error while saving verfi email data");
+      res.status(404).send("Error while hashing data");
     })
-  })
-  .catch((err)=>{
-    res.status(404).send("Error while hashing data");
-  })
-};
+}
+
 
 // verify email
 app.get("/verify/:userId/:uniqueString", (req,res) => {
   let {userId, uniqueString} = req.params;
-
   UserVerification.find({userId})
   .then((result) => {
     if (result.length > 0){
