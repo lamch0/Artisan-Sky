@@ -1,0 +1,37 @@
+<div>
+    <form method="POST" action="/upload_post" id="upload_post" enctype="multipart/form-data" style="margin-bottom: 20px;">
+        <h3 style="margin-bottom: 20px;">Upload file</h3>
+        <input type="file" id="input_file_image" name="image" accept="image/*" required style="display: none;" onchange="showImageInmodal(this);">
+        <a href="javascript:void(0);" onclick="$('#input_file_image').click();" style="width: 200px; text-align: center;">Upload Image</a>
+    </form>
+</div>
+
+<div id="modal_image_upload">
+    <div>
+        <h5>Upload Image</h5>
+        <button type="button" data-dismiss="modal"><span>&times;</span></button>
+    </div>
+    <div>
+        <img id="preview">
+    </div>
+    <div>
+        <button type="submit" form="upload_post"> Upload Image</button>
+        <button type="button" data-dismiss="modal">Close</button>
+    </div>
+</div>
+
+<script>
+    function showImageInmodal(file){
+        var file = document.getElementById("nput_file_image").files;
+        if(file.length > 0){
+            var fileReader = new FileReader();
+
+            fileReader.onload - function(event){
+                document.getElementById("preview").setAttribute("src", event.target.result);
+                $("#modal_image_upload").modal("show");
+            };
+            fileReader.readAsDataURL(file[0]);
+        }
+    }
+</script>
+
