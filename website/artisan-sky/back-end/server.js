@@ -221,13 +221,13 @@ const sendVeriEmail = ({_id, email}, res) => {
       .then(()=>{
         transporter.sendMail(mailOptions)
         .then(()=>{
-          res.json({
-            status: "Pending"
-          })
+          // res.json({
+          //   status: "Pending"
+          // })
         })
         .catch((err)=>{
           console.log(err)
-          res.status(404).send("Error of verification email");  
+          // res.status(404).send("Error of verification email");  
         })
         
       })
