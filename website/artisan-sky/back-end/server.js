@@ -27,6 +27,7 @@ mongoose.connect("mongodb+srv://artisansky:webuildappfromscratch@artisan.0mzss.m
   useUnifiedTopology: true
 })
 const user = require("./user_model")
+const post = require("./post_model")
 //const admin = require("./admin_model")
 /*const userSchema = new mongoose.Schema({
   name: {
@@ -123,7 +124,6 @@ initializePassport(
 app.use(morgan(":method :url :status :res[content-length] - :response-time ms"))
 app.set('views', path.join(__dirname, "views"));
 app.set('view engine', 'ejs')
-app.use(express.urlencoded({ extended: false }))
 app.use(flash())
 app.use(session({
   secret: process.env.SESSION_SECRET,

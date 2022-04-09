@@ -9,11 +9,30 @@ mongoose.connect("mongodb+srv://artisansky:webuildappfromscratch@artisan.0mzss.m
   useUnifiedTopology: true
 })
 const user = require("../user_model")
+const post = require("../post_model")
 
+router.get('/my_posts', checkAuthenticated, (req, res) => {
+    if(req.session.passport.user){
+        user.findOne({id: req.session.passport.user}, (logedInUser) => {
+            post.find({
+                "creater.id": req.session.passport.user
+            }).sort({
+                createTime: -1
+            }).toArray( (error1, images) => {
+                    render("my_upload", {
+                    "images": images,
+                    "user": logedInUser
+                })
+            })
+        })
+    }else{
+        res.redirect('/login')
+    }
+})
 
 router.get('/pwmod', checkAuthenticated, (req,res) => {
     res.render('passwordmod')  
-  })
+})
 
 router.get("/test", (req, res) => {
     res.send("<h1>It's working 🤗</h1>")
