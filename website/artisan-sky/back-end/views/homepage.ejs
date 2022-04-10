@@ -15,23 +15,14 @@
         <li><a href="/register">Register</a></li>
     </ul>
 </nav>
-<h5><%=messages.pic%></h5>
 <div>
-    <% posts.forEach(function(posts){ %>
+    <% posts.forEach(function(post){ %>
     <div>
-        <a href="/view_post?_id=<%= posts._id%>">
+        <a href="/view_post?_id=<%= post._id%>">
             <div>
-                <h5><%=messages.pic%></h5>
-                <img src=<%=messages.pic%> alt=" "/>
+                <img src="<%=post.file_path.replace('public', '')%>" alt="..."/>
                 <div>
-                    <ul>
-                        <!-- <li>
-                            <% var createdTime = new Date(posts.createdTime)
-                            var date = createdTime.getDate()+ ""; %>
-                            <%= date.padStart(2, "0") + " " + months[createdTime.getMonth()] + ", " + createdTime.getFullYear() %>
-                        </li> -->
-                    </ul>
-                    <h5><%= posts.creater.name %></h5>
+                    <h5><%= post.creater.name %></h5>
                 </div>
             </div>
         </a>

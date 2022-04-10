@@ -39,23 +39,21 @@ router.get("/test", (req, res) => {
     res.send("<h1>It's working 🤗</h1>")
 })
 
-router.get("/", (req, res) => {
-    post.find().sort({
-        "createTime": -1
-    }).exec((error, posts)=>{
+router.get("/", async (req, res) => {
+    post.find()
+    .sort({createTime: -1})
+    .exec(function(err, posts){
         if(req.session.passport){
-            user.findOne({id: req.session.passport.user}, (User) => {
-                console.log("path: "+ posts.file_path)
+            const User = user.findOne({id: req.session.passport.user})
                 req.flash('pic', posts.file_path)
-                res.render('homepage.ejs', {
+                return res.render('homepage.ejs', {
                     "query": req.query,
                     "user": User,
                     "posts": posts
                 })
-                
-            })
         }else{
-            res.render('homepage.ejs', {
+            console.log("post._id: "+ posts._id)
+            return res.render('homepage.ejs', {
                 "query": req.query,
                 "posts": posts
             })
