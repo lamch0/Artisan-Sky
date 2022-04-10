@@ -9,18 +9,19 @@ mongoose.connect("mongodb+srv://artisansky:webuildappfromscratch@artisan.0mzss.m
   useUnifiedTopology: true
 })
 const user = require("../user_model")
-const post = require("../post_model")
+const post = require("../post_model");
+const { query } = require('express');
 
 router.get('/my_posts', checkAuthenticated, (req, res) => {
     if(req.session.passport.user){
         user.findOne({id: req.session.passport.user}, (logedInUser) => {
-            post.find({
-                "creater.id": req.session.passport.user
-            }).sort({
+            post.find({"creater.id": req.session.passport.user})
+            .sort({
                 createTime: -1
-            }).toArray( (error1, images) => {
-                    render("my_upload", {
-                    "images": images,
+            }).exec( (error1, result) => {
+                res.render("my_upload", {
+                    "query": req.query,
+                    "posts": result,
                     "user": logedInUser
                 })
             })
@@ -39,7 +40,29 @@ router.get("/test", (req, res) => {
 })
 
 router.get("/", (req, res) => {
-    res.render('homepage.ejs')
+    post.find().sort({
+        "createTime": -1
+    }).exec((error, posts)=>{
+        if(req.session.passport){
+            user.findOne({id: req.session.passport.user}, (User) => {
+                console.log("path: "+ posts.file_path)
+                req.flash('pic', posts.file_path)
+                res.render('homepage.ejs', {
+                    "query": req.query,
+                    "user": User,
+                    "posts": posts
+                })
+                
+            })
+        }else{
+            res.render('homepage.ejs', {
+                "query": req.query,
+                "posts": posts
+            })
+        }
+    })
+
+    
 })
 
 router.get("/profile",  checkAuthenticated, async (req, res) => {

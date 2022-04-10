@@ -18,6 +18,10 @@ const bodyParser = require('body-parser')
 const mongoose = require('mongoose');
 const { runInNewContext } = require('vm');
 const multer =require('multer')
+const formidable = require('formidable')
+const fileSystem = require('fs')
+
+
 
 dotenv.config({ path: './.env'})
 
@@ -391,6 +395,34 @@ app.delete('/logout', (req, res) => {
   })
   req.logOut()
   res.redirect('/login')
+})
+
+app.post("/upload_post", checkAuthenticated, async function(req, res){
+  var formData = new formidable.IncomingForm();
+  formData.maxFileSize = 1000 * 1024 * 1024
+  formData.parse(req, function(error1, fields, files){
+    var oldPath = files.image.filepath
+    var newPath = "public/uploads/post_images/" + new Date().getTime() + "-" + files.image.originalFilename
+    fileSystem.rename(oldPath, newPath, async(error2)=>{
+      const creater = await user.findOne({ id: req.session.passport.user });
+        
+        delete creater.password
+        delete creater.id
+        var currentTime = new Date().getTime()
+
+        const newPost = new post({
+          file_path: newPath,
+          creater: creater,
+          createTime: currentTime,
+          likers: [],
+          comments: [],
+        })
+        await newPost.save()
+        req.flash('info', "Post have been successfully uploaded!")
+        return res.render('my_upload')
+      
+    })
+  })
 })
 
 //Function to cheack if the user is authenticated if yes the continuse request, else stay in login page

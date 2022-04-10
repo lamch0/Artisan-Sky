@@ -1,8 +1,12 @@
 <html>
 <head>
     
- </head>
+</head>
 <body>
+<% months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"] %>
+<script>
+    var months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]
+</script>
     <h1>Artisan's Sky</h1>
 <nav>
     <ul>
@@ -11,5 +15,28 @@
         <li><a href="/register">Register</a></li>
     </ul>
 </nav>
+<h5><%=messages.pic%></h5>
+<div>
+    <% posts.forEach(function(posts){ %>
+    <div>
+        <a href="/view_post?_id=<%= posts._id%>">
+            <div>
+                <h5><%=messages.pic%></h5>
+                <img src=<%=messages.pic%> alt=" "/>
+                <div>
+                    <ul>
+                        <!-- <li>
+                            <% var createdTime = new Date(posts.createdTime)
+                            var date = createdTime.getDate()+ ""; %>
+                            <%= date.padStart(2, "0") + " " + months[createdTime.getMonth()] + ", " + createdTime.getFullYear() %>
+                        </li> -->
+                    </ul>
+                    <h5><%= posts.creater.name %></h5>
+                </div>
+            </div>
+        </a>
+    </div>
+   <%})%>
+</div>
 </body>
 </html>
