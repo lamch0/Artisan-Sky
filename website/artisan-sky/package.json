@@ -6,17 +6,12 @@
     "@testing-library/jest-dom": "^5.16.4",
     "@testing-library/react": "^12.1.4",
     "@testing-library/user-event": "^13.5.0",
-<<<<<<< HEAD
-    "react": "^18.0.0",
-    "react-dom": "^18.0.0",
-    "react-router-dom": "^6.3.0",
-=======
+    "bootstrap": "^5.1.3",
     "express": "^4.17.3",
     "morgan": "^1.10.0",
     "mysql2": "^2.3.3",
     "react": "^17.0.2",
     "react-dom": "^17.0.2",
->>>>>>> 671aa5768457a2eda031330ea954b6fc946fd5c3
     "react-scripts": "5.0.0",
     "styled-components": "^5.3.5",
     "web-vitals": "^2.1.4"
