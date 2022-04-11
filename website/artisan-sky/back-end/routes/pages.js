@@ -52,7 +52,6 @@ router.get("/", async (req, res) => {
                     "posts": posts
                 })
         }else{
-            console.log("post._id: "+ posts._id)
             return res.render('homepage.ejs', {
                 "query": req.query,
                 "posts": posts
@@ -103,6 +102,10 @@ router.get("/login", checkNotAuthenticated, (req, res) => {
 router.get("/register", checkNotAuthenticated, (req, res) => {
     req.flash('info', null)
     res.render('register.ejs')
+})
+
+router.get('/waitForVeri',checkNotAuthenticated, (req, res) => {
+    res.render('waitForVeri')
 })
 
 function checkAuthenticated(req, res, next){

@@ -188,7 +188,7 @@ app.post('/register', checkNotAuthenticated, async (req, res) => {
             // email verification
             sendVeriEmail(result, res);
           })
-          res.redirect('/login')
+          res.redirect('/waitForVeri')
         } catch {
           console.log(error)
           res.redirect('/register')
