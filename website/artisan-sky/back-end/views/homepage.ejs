@@ -15,30 +15,67 @@
         <li><a href="/register">Register</a></li>
     </ul>
 </nav>
+<script>
+    function doLike(self){
+        var _id = self.getAttribute("data-id")
+        var isLiked = self.getAttribute("data-is-liked") == "true";
+        if(!isLiked){
+            self.setAttribute("disabled", "disabled")
+            self.style.backgroundColor = "darkgray"
+            self.style.color = "white";
+        }
+        $.ajax({
+            url: "/do_like",
+            method: "POST",
+            data: {
+                "_id": _id
+            },
+            success: function(response){
+                console.log(response)
+                if(response.status == "success"){
+                    self.style.backgroundColor = "royalblue"
+                    self.style.color = "white"
+
+                    var likes = parseInt(self.getAttribute("data-likes"))
+                    likes++
+                    self.innerHTML = "Like (" + likes + ")" 
+                }else{
+                    alert(response.message)
+                    if(!isLiked){
+                        self.style.backgroundColor = "#fff"
+                        self.style.color = "black"
+                    }
+                }
+            }
+        })
+        return false
+    }
+</script>
 <div>
     <% posts.forEach(function(post){ %>
     <div>
         <a href="/view_post?_id=<%= post._id%>">
             <div>
                 <img src="<%=post.file_path.replace('public', '')%>" alt="..."/>
-                <% var hasLiked = false %>
-                <% post.likers.forEach(function (liker){ %>
-                    if(liker._id == user._id){
-                        hasLiked = true
-                    }
-                }) %>
-                <% if(hasLiked){ %>      
-                    <span data-is-liked = "true" onclick="doLike(this);" data-id="<%= post._id %>">
-                        Like(<%= post.likers.length %>)</span>              
-                <% } else { %>
-                    <span data-is-liked="false" onclick="doLike(this);" data-id="<%= post._id %>" data-likes="<%= post.likers.length %>">
+                <% if(typeof isLogin !== 'undefined' && isLogin){
+                    var hasLiked = false;
+                    post.likers.forEach(function(liker){
+                        if(liker._id == User._id){
+                            hasLiked = true;
+                        }
+                    })
+                    if(hasLiked) { %>
+                        <span data-is-like="true" onclick="doLike(this);" data-id="'<%= image._id %>">
+                        Like (<%= post.likers.length %>)</span>
+                    <% } else { %>
+                        <span data-is-liked="false" onclick="doLike(this);" data-id="<%= post._id %>" data-like="<%= post.likers.length %>">
                         Like(<%= post.likers.length %>)</span>
-                    <% }    
-                } else { %>
-                    <span data-is-liked="false" onclick="doLike(this);" data-id="<%= post._is %>">
-                        Likes(<%= post.likers.length %>)</span>
+                    <% }
+                } else{ %>
+                    <span data-is-liked="false" onclick="doLike(this);" data-id="<%= post._id %>">
+                    Likes(<%= post.likers.length %>)</span>
                 <% } %>
-                <% ) %>
+
                 <div>
                     <ul>
                         <li>

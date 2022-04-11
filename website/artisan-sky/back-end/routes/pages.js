@@ -25,7 +25,7 @@ router.get("/view_post", function(req, res){
             })
         } else {
             res.render("view_post", {
-                "isLogin": true,
+                "isLogin": false,
                 "query": req.query,
                 "gotPost": gotPost,
             })
@@ -68,12 +68,14 @@ router.get("/", async (req, res) => {
             const User = user.findOne({id: req.session.passport.user})
                 req.flash('pic', posts.file_path)
                 return res.render('homepage.ejs', {
+                    "isLogin": true,
                     "query": req.query,
                     "user": User,
                     "posts": posts
                 })
         }else{
             return res.render('homepage.ejs', {
+                "isLogin": false,
                 "query": req.query,
                 "posts": posts
             })
