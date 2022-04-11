@@ -22,7 +22,7 @@ const userSchema = new mongoose.Schema({
       type: String,
       default: 'images.png',
     },
-    verfied: {
+    verified: {
       type: Boolean,
       default: false,
     },
