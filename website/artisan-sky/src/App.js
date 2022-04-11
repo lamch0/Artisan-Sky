@@ -15,30 +15,28 @@ function App() {
   return (
     <body>
       <Router>
-        <div>
-          <header role="banner" class="sidebar">
-            <nav>
-              <a>
-                  <Link to="/home" class="nav"> Home </Link>
-              </a>
-              <br />
-              <a>
-                  <Link to="/login" class="nav"> Login </Link>
-              </a>
-              <br />
-              <a>
-                  <Link to="/register" class="nav"> Register </Link>
-              </a>
-              <br />
-              <a>
-                  <Link to="/manage/account" class="nav"> Manage Account </Link>
-              </a>
-              <br />
-              <a>
-                  <Link to="/manage/admin" class="nav"> Manage Admin </Link>
-              </a>
-            </nav>
-          </header>
+        <div class="row">
+          <nav class="col-sm-4 d-flex flex-column flex-shrink-0 p-3 text-white bg-dark">
+            <a>
+              <Link to="/home" class="nav"> Home </Link>
+            </a>
+            <br />
+            <a>
+              <Link to="/login" class="nav"> Login </Link>
+            </a>
+            <br />
+            <a>
+              <Link to="/register" class="nav"> Register </Link>
+            </a>
+            <br />
+            <a>
+              <Link to="/manage/account" class="nav"> Manage Account </Link>
+            </a>
+            <br />
+            <a>
+              <Link to="/manage/admin" class="nav"> Manage Admin </Link>
+            </a>
+          </nav>
 
           <Routes>
             <Route path = '/home' element = {<Home />} />
