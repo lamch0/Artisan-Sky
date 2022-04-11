@@ -62,7 +62,7 @@ transporter.verify((err, e)=>{
   if (err) {
     console.log(err);
   } else {
-    console.log("ready for messages");
+    // console.log("ready for messages");
   }
 })
 const storage = multer.diskStorage({
