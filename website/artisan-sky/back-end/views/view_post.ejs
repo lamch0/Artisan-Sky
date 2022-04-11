@@ -2,6 +2,7 @@
     var months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"]
 </script>
 
+<% months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"] %>
 <div>
     <img src="<%=gotPost.file_path.replace('public', '')%>"/>
 </div>
@@ -10,10 +11,11 @@
 </div>
 <div>
     <a href="#"><%
-        var createTime = new Date(gotPost.createTime)
+        var createTime = new Date(Number(gotPost.createTime))
         var date = createTime.getDate() + ""
         %>
         <span>Date: </span><%= date.padStart(2, "0") + " " + months[createTime.getMonth()] + ", " + createTime.getFullYear() %>
     </a>
-    <a href="#"><%= gotPost.comments.length %> Comments</a>
+    
 </div>
+<div><a href="#"><%= gotPost.comments.length %> Comments</a></div>

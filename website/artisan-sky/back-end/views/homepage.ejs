@@ -21,7 +21,36 @@
         <a href="/view_post?_id=<%= post._id%>">
             <div>
                 <img src="<%=post.file_path.replace('public', '')%>" alt="..."/>
+                <% 
+                var hasLiked = false
+                post.likers.forEach(function (liker){
+                    if(liker._id == user._id){
+                        hasLiked = true
+                    }
+                }) %>
+                <% if(hasLiked){ %>      
+                    <span data-is-liked = "true" onclick="doLike(this);" data-id="<%= post._id %>">
+                        Like(<%= post.likers.length %>)</span>              
+                <% } else { %>
+                    <span data-is-liked="false" onclick="doLike(this);" data-id="<%= post._id %>" data-likes="<%= post.likers.length %>">
+                        Like(<%= post.likers.length %>)</span>
+                    <% }    
+                } else { %>
+                    <span data-is-liked="false" onclick="doLike(this);" data-id="<%= post._is %>">
+                        Likes(<%= post.likers.length %>)</span>
+                <% } %>
+                <% ) %>
                 <div>
+                    <ul>
+                        <li>
+                            <%
+                            var createTime = new Date(Number(post.createTime))
+                            var date = createTime.getDate() + ""
+                            %>
+                            <%= date.padStart(2, "0") + " " + months[createTime.getMonth()] + ", " + createTime.getFullYear() %>    
+    
+                        </li>
+                    </ul>
                     <h5><%= post.creater.name %></h5>
                 </div>
             </div>

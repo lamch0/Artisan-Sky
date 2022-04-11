@@ -13,8 +13,8 @@ const post = require("../post_model");
 const { query } = require('express');
 
 router.get("/view_post", function(req, res){
-    console.log("req.query._id: " + req.query._id)
     post.findOne({"_id": req.query._id}, (error, gotPost)=>{
+        console.log(gotPost.createTime)
         if(req.session.passport){
             user.findOne({id: req.session.passport.user}, (logedInUser)=>{
                 res.render("view_post", {
