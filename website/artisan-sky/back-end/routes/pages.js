@@ -12,6 +12,27 @@ const user = require("../user_model")
 const post = require("../post_model");
 const { query } = require('express');
 
+router.get("/view_post", function(req, res){
+    post.findOne({ "_id": req.query._id }, function (error, gotPost){
+        if(req.session.passport){
+            user.findOne({id: req.session.passport.user}, (logedInUser) => {
+                res.render("view_post", {
+                    "isLogin": true,
+                    "query": req.query,
+                    "gotPost": gotPost,
+                    "creater": logedInUser
+                })
+            })
+        } else {
+            res.render("view_post", {
+                "isLogin": true,
+                "query": req.query,
+                "gotPost": gotPost,
+            })
+        }
+    })
+})
+
 router.get('/my_posts', checkAuthenticated, (req, res) => {
     if(req.session.passport.user){
         user.findOne({id: req.session.passport.user}, (logedInUser) => {

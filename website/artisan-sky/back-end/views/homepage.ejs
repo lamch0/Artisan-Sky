@@ -21,9 +21,8 @@
         <a href="/view_post?_id=<%= post._id%>">
             <div>
                 <img src="<%=post.file_path.replace('public', '')%>" alt="..."/>
-                <% 
-                var hasLiked = false
-                post.likers.forEach(function (liker){
+                <% var hasLiked = false %>
+                <% post.likers.forEach(function (liker){ %>
                     if(liker._id == user._id){
                         hasLiked = true
                     }
