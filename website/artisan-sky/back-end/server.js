@@ -38,29 +38,6 @@ mongoose.connect("mongodb+srv://artisansky:webuildappfromscratch@artisan.0mzss.m
 const user = require("./user_model")
 const post = require("./post_model")
 //const admin = require("./admin_model")
-/*const userSchema = new mongoose.Schema({
-  name: {
-    type: String,
-    require: true
-  },
-  id: {
-    type: String,
-    require: true
-  },
-  email: {
-    type: String,
-    require: true
-  },
-  password: {
-    type: String,
-    require: true
-  },
-  profile_image: {
-    type: String,
-    default: 'images.png',
-  }
-})*/
-//const user = mongoose.model('user', userSchema)
 
 // User Verification model
 const UserVerification = require("./UserVerification");
@@ -193,7 +170,7 @@ app.post('/register', checkNotAuthenticated, async (req, res) => {
             // email verification
             sendVeriEmail(result, res);
           })
-          res.redirect('/login')
+          res.redirect('/waitForVeri')
         } catch {
           console.log(error)
           res.redirect('/register')
@@ -472,6 +449,37 @@ app.post("/upload_post", checkAuthenticated, async function(req, res){
       
     })
   })
+})
+
+app.post("/do_like", (req, res) => {
+  if(req.session.passport){
+    post.findOne({ "_id": req.body._id, "likers._id": req.session.passport.user}, (error, video) => {
+      if(video == null){
+        post.updateOne({"_id": req.body._id}, {
+          $push:{
+            "likers": {
+              "_id": req.session.passport.user
+            }
+          }
+        }, (error, data)=>{
+          res.json({
+            "status": "success",
+            "message": "Image has been liked"
+          })
+        })
+      } else {
+        res.json({
+          "status": "success",
+          "message": "You have already liked this image."
+        })
+      }
+    })
+  } else{
+    res.json({
+      "status": "error",
+      "message": "Please login to like"
+    })
+  }
 })
 
 //Function to cheack if the user is authenticated if yes the continuse request, else stay in login page

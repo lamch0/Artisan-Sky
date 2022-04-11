@@ -12,6 +12,27 @@ const user = require("../user_model")
 const post = require("../post_model");
 const { query } = require('express');
 
+router.get("/view_post", function(req, res){
+    post.findOne({ "_id": req.query._id }, function (error, gotPost){
+        if(req.session.passport){
+            user.findOne({id: req.session.passport.user}, (logedInUser) => {
+                res.render("view_post", {
+                    "isLogin": true,
+                    "query": req.query,
+                    "gotPost": gotPost,
+                    "creater": logedInUser
+                })
+            })
+        } else {
+            res.render("view_post", {
+                "isLogin": false,
+                "query": req.query,
+                "gotPost": gotPost,
+            })
+        }
+    })
+})
+
 router.get('/my_posts', checkAuthenticated, (req, res) => {
     if(req.session.passport.user){
         user.findOne({id: req.session.passport.user}, (logedInUser) => {
@@ -47,13 +68,14 @@ router.get("/", async (req, res) => {
             const User = user.findOne({id: req.session.passport.user})
                 req.flash('pic', posts.file_path)
                 return res.render('homepage.ejs', {
+                    "isLogin": true,
                     "query": req.query,
                     "user": User,
                     "posts": posts
                 })
         }else{
-            console.log("post._id: "+ posts._id)
             return res.render('homepage.ejs', {
+                "isLogin": false,
                 "query": req.query,
                 "posts": posts
             })
@@ -105,6 +127,7 @@ router.get("/register", checkNotAuthenticated, (req, res) => {
     res.render('register.ejs')
 })
 
+
 router.get("/chatroom", (req,res)=>{
     req.flash('info', null)
     res.render('chat_room/chat_room.ejs')
@@ -113,6 +136,11 @@ router.get("/chatroom", (req,res)=>{
 router.get("/chat", (req,res)=>{
     req.flash('info', null)
     res.render('chat_room/chat.ejs')
+})
+
+router.get('/waitForVeri',checkNotAuthenticated, (req, res) => {
+    res.render('waitForVeri')
+
 })
 
 function checkAuthenticated(req, res, next){
