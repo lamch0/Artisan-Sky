@@ -370,7 +370,32 @@ app.post('/adminprofile', upload.single('profile_image'), checkAuthenticated, as
     }
 })
 
-app.get('/getusers', async (req, res) => {
+app.put('/resetpw', checkAuthenticated, async (req, res) => {
+  try{
+    //console.log("in resetpw put body: "+ req.body.id)
+    user.findOne({id: req.body.id},
+      (err, user) => {
+        if (err)
+          res.sendStatus(404)
+        else {
+          bcrypt.hash(req.body.password, 10, 
+            (err, hash) => {
+              if (err)
+                res.res.sendStatus(404)
+              else {
+                user['password'] = hash;
+                user.save();
+              }
+            }
+          )
+        }
+      })
+  } catch {
+    res.sendStatus(404)
+  }
+})
+
+app.get('/getusers', checkAuthenticated, async (req, res) => {
   user.find({user_type: "user"},
     (err, users) =>{
       if (err)
@@ -379,16 +404,16 @@ app.get('/getusers', async (req, res) => {
         let new_users = ''
         users.forEach(user => {
           let new_user_row = user_info(user.id, user.name, user.email)
-          console.log(new_user_row)
+          //console.log(new_user_row)
           new_users = new_users + new_user_row
         });
-        console.log(new_users)
+        //console.log(new_users)
         res.send(new_users)
       }
     })
 })
 
-app.get('/manageusers', async (req, res) => {
+app.get('/manageusers', checkAuthenticated, async (req, res) => {
   try{
         res.render('manageUsers')
   } catch (error){
@@ -403,21 +428,22 @@ function user_info(id, name, email){
     <td name="name">${name}</td>
     <td name="email">${email}</td>
     <td>
-      <form action="/resetpw" method="post">
-        <button name="id_to_reset" value="${id}" class="btn btn-primary" type="button">Reset password</button>
-      </form>
+      <input type="button" value="Reset password" class="btn btn-primary" onclick="resetpw(${id})">
     </td>
   </tr>
 `)
 }
+{/* <form action="/resetpw?_method=PUT" method="POST">
+  <button name="id_to_reset" value="${id}" class="btn btn-primary" type="button">Reset password</button>
+</form> */}
 
 //changes password of normal user from passwordmod.ejs
 //app.put('/pwmod', (req, res) => {
 //app.put('/pwmod', passport.authenticate('local'), (req, res) => {
 app.put('/pwmod', checkAuthenticated, 
   (req, res) => {
-    console.log("User: "+ req.session.passport.user)
-    console.log(req.body)
+    // console.log("User: "+ req.session.passport.user)
+    // console.log(req.body)
     user.findOne({id: req.session.passport.user},
       (errUser, User) => {
         //console.log(User)

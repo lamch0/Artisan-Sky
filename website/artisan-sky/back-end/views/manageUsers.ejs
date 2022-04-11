@@ -108,7 +108,33 @@
 
 <script>
     window.onload = () => {
-        console.log("finding all users")
+        //console.log("finding all users")
         fetch('/getusers').then(res => res.text()).then(txt => document.querySelector("#users").innerHTML = txt);
+    }
+    function resetpw(id){
+        //send a PUT request to reset pw
+        //console.log("reset password of " + id)
+        let decision = prompt(`Reset password for user ${id}:`, "password")
+        if (decision == null || decision == '')
+            console.log("password reset cancelled")
+        else {
+            console.log("password reset confirmed")
+            const user = {id: id,
+                          password: decision}
+            //console.log(user)
+            fetch('/resetpw', {
+                method: 'PUT',
+                headers:{
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(user)
+            })
+        }
+        
+        // .then(res => {
+        //     return response.json()
+        // }).then(data => {
+        //     console.log(data)
+        // });
     }
 </script>
