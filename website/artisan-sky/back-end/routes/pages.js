@@ -105,6 +105,16 @@ router.get("/register", checkNotAuthenticated, (req, res) => {
     res.render('register.ejs')
 })
 
+router.get("/chatroom", (req,res)=>{
+    req.flash('info', null)
+    res.render('chat_room/chat_room.ejs')
+})
+
+router.get("/chat", (req,res)=>{
+    req.flash('info', null)
+    res.render('chat_room/chat.ejs')
+})
+
 function checkAuthenticated(req, res, next){
     if (req.isAuthenticated()){
         return next()

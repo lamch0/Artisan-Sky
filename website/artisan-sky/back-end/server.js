@@ -21,7 +21,12 @@ const multer =require('multer')
 const formidable = require('formidable')
 const fileSystem = require('fs')
 
-
+const http = require('http')
+const server = http.createServer(app)
+const {userJoin, getCurrentUser, userLeave, getRoomUsers} = require('./utils/users')
+const socketio = require('socket.io')
+const io = socketio(server)
+const formatMsg = require('./utils/message')
 
 dotenv.config({ path: './.env'})
 
@@ -198,6 +203,47 @@ app.post('/register', checkNotAuthenticated, async (req, res) => {
     console.log(error)
     res.redirect('/register')
   }
+})
+
+const botName = 'Artisan Sky Bot'
+// Run when clients connects
+io.on('connection', socket => {
+  socket.on('joinRoom', ({username, room})=>{
+    const user = userJoin(socket.id, username, room);
+    socket.join(room);
+
+
+    socket.emit('message', formatMsg(botName, 'Welcome to the Real-time Chat Room!'));
+
+    // Broadcast when a user connects
+    socket.broadcast.to(user.room)
+    .emit('message', formatMsg(botName, `${user.username} has joined the chat`));
+  })
+
+  // Listen for chatMessage
+  socket.on('chatMessage', (msg) => {
+    const user = getCurrentUser(socket.id);
+
+    io.to(user.room)
+    .emit('message', formatMsg(user.username, msg));
+  });
+
+  // when client disconnects
+  socket.on('disconnect', () => {
+    const user = userLeave(socket.id);
+
+    if (user) {
+      io.to(user.room)
+      .emit('message', formatMsg(botName, `${user.username} has left the chat`));
+    }
+
+    // Info sidebar
+    io.to(user.room)
+    .emit('roomUsers', {
+      room: user.room,
+      users: getRoomUsers(user.room)
+    })  
+  });
 })
 
 // send verification email
@@ -466,7 +512,7 @@ function checkNotAuthenticated(req, res, next){
 
 //print what port we are listening
 const port = process.env.PORT || 8080
-app.listen(port, () => {
+server.listen(port, () => {
   console.log(`Listening on port:${port}`)
 })
 
