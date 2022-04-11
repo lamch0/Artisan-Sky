@@ -370,6 +370,47 @@ app.post('/adminprofile', upload.single('profile_image'), checkAuthenticated, as
     }
 })
 
+app.get('/getusers', async (req, res) => {
+  user.find({user_type: "user"},
+    (err, users) =>{
+      if (err)
+        res.redirect('/adminprofile')
+      else {
+        let new_users = ''
+        users.forEach(user => {
+          let new_user_row = user_info(user.id, user.name, user.email)
+          console.log(new_user_row)
+          new_users = new_users + new_user_row
+        });
+        console.log(new_users)
+        res.send(new_users)
+      }
+    })
+})
+
+app.get('/manageusers', async (req, res) => {
+  try{
+        res.render('manageUsers')
+  } catch (error){
+    console.log(error)
+    res.redirect('/adminprofile')
+  }
+})
+
+function user_info(id, name, email){
+  return(`  <tr name="user">
+    <th name="id" scope="row">${id}</th>
+    <td name="name">${name}</td>
+    <td name="email">${email}</td>
+    <td>
+      <form action="/resetpw" method="post">
+        <button name="id_to_reset" value="${id}" class="btn btn-primary" type="button">Reset password</button>
+      </form>
+    </td>
+  </tr>
+`)
+}
+
 //changes password of normal user from passwordmod.ejs
 //app.put('/pwmod', (req, res) => {
 //app.put('/pwmod', passport.authenticate('local'), (req, res) => {
@@ -479,6 +520,36 @@ app.post("/do_like", (req, res) => {
       "status": "error",
       "message": "Please login to like"
     })
+  }
+})
+
+app.post("/do_comment", (req, res) => {
+  if(req.session.passport){
+    var comment = req.body.comment
+    var _id = req.body._id 
+    console.log("id: "+req.session.passport.user)
+    console.log("session: "+req.session.passport)
+    user.findOne({id: req.session.passport.user}, function(error, User){
+      console.log("User: "+User)
+      delete User.password
+
+      post.findOneAndUpdate({
+        "_id": _id
+      }, {
+        $push: {
+          "comments": {
+            "user": User,
+            "comment": comment,
+            "createTime": new Date().getTime()
+          }
+        }
+      }, function (error, data){
+        res.redirect("/view_post?_id=" + _id + "&message=success#comments")
+      })
+    })
+
+  }else{
+    res.redirect("/view_post?_id=" + _id + "&error=not_login#comments")
   }
 })
 

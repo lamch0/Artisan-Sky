@@ -19,3 +19,62 @@
     
 </div>
 <div><a href="#"><%= gotPost.comments.length %> Comments</a></div>
+
+<div>
+    <section id="comments">
+        <% if (typeof query.message !== "undefined") { %>
+            <div> 
+                <% if (query.message == "success"){ %>
+                    Your comment has been posted.
+                <% } %>
+            </div>
+        <% } %>
+
+        <% if (typeof query.error !== "undefined") { %>
+            <div> 
+                <% if (query.error == "not_login"){ %>
+                    Your have been logged out. Please login again.
+                <% } %>
+            </div>
+        <% } %>
+        
+        <h3> Comments<span>(<%= gotPost.comments.length%>)</span></h3>
+
+        <ul>
+            <%
+            gotPost.comments = gotPost.comments.reverse()
+            gotPost.comments.forEach(function (comment){ %>
+            <li>
+                <div><img src="/uploads/user_profile_images/images.png"/></div>
+                <div>
+                    <div></div>
+                    <div>
+                        <%= comment.user.name %><span class="date">
+                        <% var createTime = new Date(Number(comment.createTime));
+                           var date = createTime.getDate() + "" %>
+                        <%= date.padStart(2, "0") + " " + months[createTime.getMonth()] + ", " + createTime.getFullYear() %></span>
+                    </div>
+                    <p><%= comment.comment %></p>
+                </div>
+            </li>
+
+           <% }) %>
+        </ul>
+    </section>
+</div>
+
+<div>
+    <h3>Add Comment</h3>
+
+    <% if (typeof isLogin !== "undefined" && isLogin){ %>
+    <form method="POST" action="/do_comment">
+        <input type="hidden" name="_id" value="<%= gotPost._id %>">
+        <textarea name="comment" cols="30" row="5" placeholder="Comment"></textarea>
+        <button type="submit">Add Comment</button>
+    </form>
+    <% } else { %>
+        <div>
+            Only registered users can commemt.
+        </div>
+    <% } %>
+</div>
