@@ -82,23 +82,37 @@
             <img class="mb-4" src="./Artisans_Sky.png" alt="" width="72" height="72">
             <h1 class="h3 mb-3 fw-normal">Register</h1>
             <div class="form-floating">
-              <input type="name" class="form-control" id="floatingName" placeholder="name">
+              <input type="name" class="form-control" id="floatingName" placeholder="name" required>
               <label for="floatingName">Name</label>
             </div>
             <div class="form-floating">
-              <input type="email" class="form-control" id="floatingInput" placeholder="name@example.com">
+              <input type="email" class="form-control" id="floatingInput" placeholder="name@example.com" required>
               <label for="floatingInput">Email address</label>
             </div>
             <div class="form-floating">
-              <input type="password" class="form-control" id="floatingPassword" placeholder="Password">
+              <input type="password" class="form-control" id="floatingPassword" placeholder="Password" required>
               <label for="floatingPassword">Password</label>
             </div>
             <div class="form-floating">
-              <input type="re-password" class="form-control" id="floatingPassword" placeholder="Password">
-              <label for="floatingPassword">Re-enter password</label>
+              <input type="password" class="form-control" id="floatingConfirmPassword" placeholder="Password" required>
+              <label for="floatingConfirmPassword">Confirm password</label>
             </div>
-            <button class="w-100 btn btn-lg btn-primary" type="submit">Register</button>
+            <button class="w-100 btn btn-lg btn-primary" type="submit" id="btnSubmit">Register</button>
           </form>
+          <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
+          <script type="text/javascript">
+            $(function () {
+              $("#btnSubmit").click(function () {
+                var password = $("#floatingPassword").val();
+                var confirmPassword = $("#floatingConfirmPassword").val();
+                if (password != confirmPassword) {
+                  alert("Passwords do not match.");
+                  return false;
+                }
+                return true;
+              });
+            });
+          </script>
         </main>
       </div>
     </div>
