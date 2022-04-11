@@ -11,6 +11,7 @@ mongoose.connect("mongodb+srv://artisansky:webuildappfromscratch@artisan.0mzss.m
 const user = require("../user_model")
 const post = require("../post_model");
 const { query } = require('express');
+router.use(express.static(__dirname + '../views/chat_room'));
 
 router.get("/view_post", function(req, res){
     post.findOne({ "_id": req.query._id }, function (error, gotPost){
@@ -81,8 +82,6 @@ router.get("/", async (req, res) => {
             })
         }
     })
-
-    
 })
 
 router.get("/profile",  checkAuthenticated, async (req, res) => {
