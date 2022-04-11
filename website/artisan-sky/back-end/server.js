@@ -202,14 +202,14 @@ app.post('/register', checkNotAuthenticated, async (req, res) => {
 
 // send verification email
 const sendVeriEmail = ({_id, email}, res) => {
-  const currentUrl = "/register/"
+  const currentUrl = "http://localhost:8080/"
   const uniqueString = uuidv4() + _id;
   // mail options
   const mailOptions= {
     from: process.env.AUTH,
     to: email,
     subject: "Verify Your Email from Artisan Sky",
-    html: `<p>Verify your email address to complete the signup and login into your Artisan Sky account.</p><p>This link <b>expires in 15 minutes</b>.</p><p>Press <a href=${currentUrl + "user/verify/" + _id + "/" + uniqueString}>here</a> to proceed.</p>`, 
+    html: `<p>Verify your email address to complete the signup and login into your Artisan Sky account.</p><p>This link <b>expires in 15 minutes</b>.</p><p>Press <a href=${currentUrl + "user/verified/" + _id + "/" + uniqueString}>here</a> to proceed.</p>`, 
   };
   // hashing the unique string
   const saltRounds = 10;
@@ -219,7 +219,7 @@ const sendVeriEmail = ({_id, email}, res) => {
         userId: _id,
         uniqueString: hashedUniqueString,
         createdAt: Date.now(),
-        expiresAt: Date.now() + 900
+        expiresAt: Date.now() + 900000
       });
       newVeri.save()
       .then(()=>{
@@ -247,7 +247,7 @@ const sendVeriEmail = ({_id, email}, res) => {
 
 
 // verify email
-app.get("/verify/:userId/:uniqueString", (req,res) => {
+app.get("/user/verified/:userId/:uniqueString", (req,res) => {
   let {userId, uniqueString} = req.params;
   UserVerification.find({userId})
   .then((result) => {
@@ -255,6 +255,8 @@ app.get("/verify/:userId/:uniqueString", (req,res) => {
       const {expiresAt} = result[0];
       const hashedUniqueString = result[0].uniqueString;
       if (expiresAt < Date.now()) {
+        // console.log(expiresAt)
+        // console.log(Date.now)
         UserVerification.deleteOne({userId})
         .then(result=>{
           user.deleteOne({_id: userId})
@@ -280,7 +282,8 @@ app.get("/verify/:userId/:uniqueString", (req,res) => {
             .then(()=>{
               UserVerification.deleteOne({userId})
               .then(()=>{
-                res.sendFile(path.join(__dirname, "./views/verified.ejs"))
+                // res.sendFile(path.join(__dirname, "./views/verified.ejs"))
+                res.render("verified.ejs")
               })
               .catch((err)=>{
                 console.log(err);
@@ -315,7 +318,7 @@ app.get("/verify/:userId/:uniqueString", (req,res) => {
   })
 })
 
-app.get("/verified", (req, res) => {
+app.get("/user/verified", (req, res) => {
   res.sendFile(path.join(__dirname, "./views/verified.ejs"));
 })
 
