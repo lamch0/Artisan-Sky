@@ -112,8 +112,8 @@ router.get("/profile",  checkAuthenticated, async (req, res) => {
         res.render('index.ejs', {name: updateUser.name, email: updateUser.email})
     }
     else if (updateUser.user_type == 'admin'){
-        var user_image = "/uploads/user_profile_images/" + updateUser.profile_image
-        req.flash('info', user_image)
+        // var user_image = "/uploads/user_profile_images/" + updateUser.profile_image
+        // req.flash('info', user_image)
         res.redirect("/adminprofile")
     }
 })
@@ -134,7 +134,11 @@ router.get("/change_icon", checkAuthenticated, async (req, res) =>{
 // })
 
 router.get("/adminprofile", checkAuthenticated, async (req, res) => {
-    res.render('adminIndex.ejs')
+    const updateUser = await user.findOne({id: req.session.passport.user})
+    var user_image = "/uploads/user_profile_images/" + updateUser.profile_image
+    req.flash('info', user_image)
+    res.render("adminIndex", {name: updateUser.name, email: updateUser.email})
+    //res.render('adminIndex.ejs')
 })
 
 router.get("/login", checkNotAuthenticated, (req, res) => {

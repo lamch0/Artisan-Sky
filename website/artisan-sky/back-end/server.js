@@ -447,10 +447,11 @@ app.put('/resetpw', checkAuthenticated, async (req, res) => {
           bcrypt.hash(req.body.password, 10, 
             (err, hash) => {
               if (err)
-                res.res.sendStatus(404)
+                res.sendStatus(404)
               else {
                 user['password'] = hash;
                 user.save();
+                res.sendStatus(204)
               }
             }
           )
@@ -481,7 +482,11 @@ app.get('/getusers', checkAuthenticated, async (req, res) => {
 
 app.get('/manageusers', checkAuthenticated, async (req, res) => {
   try{
-        res.render('manageUsers')
+    const updateUser = await user.findOne({id: req.session.passport.user})
+    var user_image = "/uploads/user_profile_images/" + updateUser.profile_image
+    req.flash('info', user_image)
+    res.render("manageUsers", {name: updateUser.name, email: updateUser.email})
+        //res.render('manageUsers')
   } catch (error){
     console.log(error)
     res.redirect('/adminprofile')
