@@ -169,7 +169,7 @@ router.get('/waitForVeri',checkNotAuthenticated, (req, res) => {
 })
 
 
-router.get("/my_posts", checkNotAuthenticated, (req, res) => {
+router.get("/my_posts", checkAuthenticated, (req, res) => {
     // req.flash('info', null)
     res.render('my_posts.ejs')
 })

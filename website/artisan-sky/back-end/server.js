@@ -268,7 +268,7 @@ const sendVeriEmail = ({_id, email}, res) => {
       })
       .catch((err)=>{
         console.log(err);
-        res.status(404).send("Error while saving verfi email data");
+        res.status(404).send("Error while saving verify email data");
       })
     })
     .catch((err)=>{
