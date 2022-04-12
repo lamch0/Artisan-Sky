@@ -156,14 +156,14 @@
                                         </img></button>
                                       </div>
                                       <div>
-                                      <p class="fs-6">
+                                      <p class="fs-6 text-end">
                                         <%
                                         var createTime = new Date(Number(post.createTime))
                                         var date = createTime.getDate() + ""
                                         %>
                                         <%= date.padStart(2, "0") + " " + months[createTime.getMonth()] + ", " + createTime.getFullYear() %>
                                       </p>
-                                      <p class="fs-6"><%= post.creater.name %></p>
+                                      <p class="fs-6 text-end"><%= post.creater.name %></p>
                                       </div>
                                     </div>
                                 </div>
