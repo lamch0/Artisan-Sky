@@ -514,7 +514,9 @@ app.post("/upload_post", checkAuthenticated, async function(req, res){
         })
         await newPost.save()
         req.flash('info', "Post have been successfully uploaded!")
-        return res.render('my_upload')
+        var user_image = "/uploads/user_profile_images/" + creater.profile_image
+        req.flash('image', user_image)
+        return res.render('my_upload', {name: creater.name})
       
     })
   })
