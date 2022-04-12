@@ -38,24 +38,37 @@ router.get("/view_post", function(req, res){
     })
 })
 
-router.get('/new_post', checkAuthenticated, (req, res) => {
+router.get('/new_post', checkAuthenticated, async (req, res) => {
     if(req.session.passport.user){
-        user.findOne({id: req.session.passport.user}, (logedInUser) => {
-            post.find({"creater.id": req.session.passport.user})
-            .sort({
-                createTime: -1
-            }).exec( async (error1, result) => {
-                const updateUser = await user.findOne({id: req.session.passport.user})
-                var user_image = "/uploads/user_profile_images/" + updateUser.profile_image
-                req.flash('image', user_image)
-                res.render("my_upload", {
-                    "query": req.query,
-                    "posts": result,
-                    "user": logedInUser,
-                    name: updateUser.name
-                })
-            })
+        const updateUser = await user.findOne({id: req.session.passport.user})
+        var user_image = "/uploads/user_profile_images/" + updateUser.profile_image
+        req.flash('image', user_image)
+        req.flash('info', null)
+        res.render("my_upload", {
+            "query": req.query,
+            "user": updateUser,
+            name: updateUser.name
         })
+
+
+
+
+        // user.findOne({id: req.session.passport.user}, (logedInUser) => {
+        //     post.find({"creater.id": req.session.passport.user})
+        //     .sort({
+        //         createTime: -1
+        //     }).exec( async (error1, result) => {
+        //         const updateUser = await user.findOne({id: req.session.passport.user})
+        //         var user_image = "/uploads/user_profile_images/" + updateUser.profile_image
+        //         req.flash('image', user_image)
+        //         res.render("my_upload", {
+        //             "query": req.query,
+        //             "posts": result,
+        //             "user": logedInUser,
+        //             name: updateUser.name
+        //         })
+        //     })
+        // })
     }else{
         res.redirect('/login')
     }

@@ -1,4 +1,6 @@
 const mongoose = require('mongoose');
+var Schema= mongoose.Schema;
+const user = require('./user_model')
 
 const postSchema = new mongoose.Schema({
     caption: {
@@ -12,15 +14,18 @@ const postSchema = new mongoose.Schema({
         name: {
             type: String,
             require: true
-          },
-          id: {
+        },
+        // id: {
+        //     type: String,
+        //     require: true
+        // },
+        email: {
             type: String,
             require: true
-          },
-          email: {
-            type: String,
-            require: true
-          },
+        },
+        _id: {
+            type: Schema.Types.ObjectId, ref: 'user',
+        }
     },
     createTime: {
       type: String,
@@ -34,11 +39,17 @@ const postSchema = new mongoose.Schema({
         user: {
             name: {
                 type: String,
-                require: true
+                // require: true
               },
               email: {
                 type: String,
-                require: true
+                // require: true
+              },
+              // id: {
+              //   type: String,
+              // },
+              _id: {
+                type: Schema.Types.ObjectId, ref: 'user',
               },
         },
         comment: {
