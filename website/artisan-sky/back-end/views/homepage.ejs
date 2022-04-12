@@ -135,7 +135,7 @@
                     <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-3">
                         <% posts.forEach(function(post){ %>
                         <div class="col" style="">
-                            <a href="/view_post?_id=<%= post._id%>">
+                            
                             <div class="card shadow-sm">
                                 <!-- <svg class="bd-placeholder-img card-img-top" width="100%" height="225"
                                     xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Placeholder: Thumbnail"
@@ -144,31 +144,35 @@
                                     <rect width="100%" height="100%" fill="#55595c" />
                                    
                                 </svg> -->
+                                <a href="/view_post?_id=<%= post._id%>">
                                 <img src="<%=post.file_path.replace('public', '')%>" alt="..." width="100%"/>
-                      
+                                </a>
                                 <div class="card-body">
                                     <p class="card-text"><%= post.caption %></p>
                                     
                                     <div class="d-flex" style="width: 100%">
+                                      <a href="/view_post?_id=<%= post._id%>">
                                       <div class="btn-group d-flex align-items-start justify-content-start">
                                         <button type="button" class="btn btn-sm btn-outline-secondary">View</button>
                                         <button type="button" class="btn btn-sm btn-outline-secondary"><img src="./heart.png" width="16" height="16">
                                         </img></button>
                                       </div>
+                                      </a>
                                       <div class="d-flex align-items-end justify-content-end">
                                       <p class="fs-6 d-flex align-items-end justify-content-end">
+                                        &nbsp;&nbsp;&nbsp;&nbsp;
                                         <%
                                         var createTime = new Date(Number(post.createTime))
                                         var date = createTime.getDate() + ""
                                         %>
                                         <%= date.padStart(2, "0") + " " + months[createTime.getMonth()] + ", " + createTime.getFullYear() %>
                                       </p>
-                                      <p class="fs-6 d-flex align-items-end justify-content-end"><%= post.creater.name %></p>
+                                      <p class="fs-6 d-flex align-items-end justify-content-end">&nbsp;&nbsp;&nbsp;&nbsp;<%= post.creater.name %></p>
                                       </div>
                                     </div>
                                 </div>
                             </div>
-                        </a>
+                        
                         </div>
                         <%})%>
                     </div>
