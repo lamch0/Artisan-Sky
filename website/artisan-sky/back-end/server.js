@@ -367,6 +367,63 @@ app.post('/profile', upload.single('profile_image'), checkAuthenticated, async (
   }
 })
 
+//changes password of normal user from passwordmod.ejs
+app.put('/pwmod', checkAuthenticated, 
+  async (req, res) => {
+    //console.log(JSON.stringify(req.body))
+    const updateUser = await user.findOne({id: req.session.passport.user})
+    // console.log(updateUser)
+    if (updateUser.user_type == 'user'){
+        var user_image = "/uploads/user_profile_images/" + updateUser.profile_image
+        req.flash('info', user_image)
+        // req.flash('success', null)
+        // req.flash('fail', null)
+        //res.render('passwordmod', {name: updateUser.name, email: updateUser.email})
+    }
+    // console.log("User: "+ req.session.passport.user)
+    console.log(req.body)
+    user.findOne({id: req.session.passport.user},
+      async (errUser, User) => {
+        console.log("we need old password "+User.password)
+        if (errUser || User == null){
+          //res.render('passwordmod', {name: updateUser.name, email: updateUser.email})
+        }
+        else (await bcrypt.compare(req.body['og_pw'], User['password'], 
+          async (err, eq) => {
+            console.log(eq)
+            // if (err)
+              //res.render('passwordmod', {name: updateUser.name, email: updateUser.email})
+            if (eq) {
+              bcrypt.hash(req.body['new_pw'], 10, 
+                (err, hash) => {
+                  if (err){
+                    //res.render('passwordmod', {name: updateUser.name, email: updateUser.email})
+                  }
+                  else {
+                    //User['password'] = req.body['new_pw']
+                    console.log('correct password')
+                    User['password'] = hash;
+                    User.save();
+                    let success_message = `Successfully changed password`
+                    req.flash('success', success_message)
+                    res.render('passwordmod', {name: updateUser.name, email: updateUser.email})
+                  }
+                }
+              )
+            }
+            else {
+              console.log('wrong password')
+              let fail_message = `Original password is incorrect`
+              req.flash('fail', fail_message)
+              res.render('passwordmod', {name: updateUser.name, email: updateUser.email})
+            }
+          }
+        ))
+      }
+    )
+  }
+)
+
 app.post('/adminprofile', upload.single('profile_image'), checkAuthenticated, async (req, res) => {
   try{
     let updateUser = await user.findOneAndUpdate({id: req.session.passport.user}, {profile_image: req.file.filename}, {new: true})
@@ -446,49 +503,6 @@ function user_info(id, name, email){
   <button name="id_to_reset" value="${id}" class="btn btn-primary" type="button">Reset password</button>
 </form> */}
 
-//changes password of normal user from passwordmod.ejs
-//app.put('/pwmod', (req, res) => {
-//app.put('/pwmod', passport.authenticate('local'), (req, res) => {
-app.put('/pwmod', checkAuthenticated, 
-  (req, res) => {
-    // console.log("User: "+ req.session.passport.user)
-    // console.log(req.body)
-    user.findOne({id: req.session.passport.user},
-      (errUser, User) => {
-        //console.log(User)
-        if (errUser || User == null){
-          res.render('passwordmod')
-        }
-        else (bcrypt.compare(req.body['og_pw'], User['password'], 
-          (err, eq) => {
-            //console.log(eq)
-            if (err)
-              res.render('passwordmod')
-            if (eq) {
-              bcrypt.hash(req.body['new_pw'], 10, 
-                (err, hash) => {
-                  if (err)
-                    res.render('passwordmod')
-                  else {
-                    //User['password'] = req.body['new_pw']
-                    User['password'] = hash;
-                    User.save();
-                    req.flash('success', 'Successfully changed password')
-                    res.render('passwordmod')
-                  }
-                }
-              )
-            }
-            else {
-              req.flash('og_pw', 'Original password is incorrect')
-              res.render('passwordmod')
-            }
-          }
-        ))
-      }
-    )
-  }
-)
 
 //Get log out request 
 app.delete('/logout', (req, res) => {

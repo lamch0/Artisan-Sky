@@ -133,7 +133,7 @@
                             <p class="card-text"><%= gotPost.caption %></p>
                             <div class="btn-group">
                                 
-                                <button type="button" class="btn btn-sm btn-outline-secondary" onclick=<%= gotPost.likes+=1 %>><img src="./heart.png" width="16"
+                                <button type="button" class="btn btn-sm btn-outline-secondary"><img src="./heart.png" width="16"
                                         height="16">
                                     </img></button>
                                     <p class="card-text" id="likeNumber"><%= gotPost.likes %></p>
@@ -151,7 +151,7 @@
                         <div><a href="#"><%= gotPost.comments.length %> Comments</a></div>
                         
                     </div>
-                    <div>
+                    <div class="card-body">
                         <section id="comments">
                             <% if (typeof query.message !== "undefined") { %>
                                 <div> 
@@ -199,17 +199,16 @@
                             <% if (typeof isLogin !== "undefined" && isLogin){ %>
                                 <form method="POST" action="/do_comment">
                                     <input type="hidden" class="form-control" name="_id" value="<%= gotPost._id %>" aria-label="Your comment" aria-describedby="basic-addon2">
-                                    <textarea class="form-control" name="comment" placeholder="Yout Comment" ></textarea>
+                                    <textarea class="form-control" name="comment" placeholder="Yout Comment" style="width: 100%"></textarea>
                                     <div class="input-group-append">
                                         <button class="btn btn-outline-secondary" type="submit">Send</button>
                                     </div>
-
-                                </form>
-                                <% } else { %>
+                                    <% } else { %>
                                     <p>
                                         Only registered users can comment.
                                     </p>
-                                <% } %>
+                                    <% } %>
+                                </form>
                         </div>
                     </div>
                 </div>
