@@ -129,6 +129,14 @@
                         <div>
                             <h3><span>Posted by: </span><%= gotPost.creater.name %></h3>
                         </div>
+                        <div class="d-flex justify-content-between align-items-center">
+                            <p class="card-text"><%= gotPost.caption %></p>
+                            <div class="btn-group">
+                                <button type="button" class="btn btn-sm btn-outline-secondary"><img src="./heart.png" width="16"
+                                        height="16">
+                                    </img></button>
+                            </div>
+                        </div>
                         <div>
                             <a href="#"><%
                                 var createTime = new Date(Number(gotPost.createTime))
@@ -139,14 +147,7 @@
                             
                         </div>
                         <div><a href="#"><%= gotPost.comments.length %> Comments</a></div>
-                        <div class="d-flex justify-content-between align-items-center">
-                            <p class="card-text">Your caption here.</p>
-                            <div class="btn-group">
-                                <button type="button" class="btn btn-sm btn-outline-secondary"><img src="./heart.png" width="16"
-                                        height="16">
-                                    </img></button>
-                            </div>
-                        </div>
+                        
                     </div>
                     <div>
                         <section id="comments">
