@@ -352,7 +352,8 @@ app.post('/profile', upload.single('profile_image'), checkAuthenticated, async (
     let updateUser = await user.findOneAndUpdate({id: req.session.passport.user}, {profile_image: req.file.filename}, {new: true})
     user_image = "/uploads/user_profile_images/" + updateUser.profile_image
     req.flash('info', user_image)
-    return res.render('index')
+    const User = await user.findOne({id: req.session.passport.user})
+    return res.render('index', {name: User.name, email: User.email})
   } catch (error){
     console.log(error)
     res.redirect('/profile')

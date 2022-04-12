@@ -1,10 +1,9 @@
-<!-- This page is the main page of normal user accounts after successful login -->
 <!doctype html>
 <html lang="en">
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Profile/Artisan's Sky</title>
+    <title>Artisan's Sky</title>
 
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
@@ -56,7 +55,7 @@
       <hr>
       <ul class="nav nav-pills flex-column mb-auto">
           <li class="nav-item">
-              <a href="/" class="nav-link text-white" aria-current="page">
+              <a href="#" class="nav-link text-white" aria-current="page">
                   <svg class="bi me-2" width="16" height="16">
                       <use xlink:href="#home" />
                   </svg>
@@ -64,11 +63,11 @@
               </a>
           </li>
           <li>
-              <a href="/my_posts" class="nav-link active">
+              <a href="#" class="nav-link active">
                   <svg class="bi me-2" width="16" height="16">
                       <use xlink:href="#collection" />
                   </svg>
-                  My Post
+                  Post
               </a>
           </li>
       </ul>
@@ -77,12 +76,12 @@
           <a href="#" class="d-flex align-items-center text-white text-decoration-none dropdown-toggle"
               id="dropdownUser1" data-bs-toggle="dropdown" aria-expanded="false">
               <% if (messages.info) { %>
-              <img src=<%= messages.info %> alt="" width="32" height="32" class="rounded-circle me-2"/>
+              <img src=<%=messages.info%> alt="" width="32" height="32" class="rounded-circle me-2">
               <% } %>
               <strong><%= name %></strong>
           </a>
           <ul class="dropdown-menu dropdown-menu-dark text-small shadow" aria-labelledby="dropdownUser1">
-              <li><a class="dropdown-item" href="/my_posts">New post</a></li>
+              <li><a class="dropdown-item" href="/my_post">New post</a></li>
               <li><a class="dropdown-item" href="/profile">Profile</a></li>
               <li>
                   <hr class="dropdown-divider">
@@ -94,28 +93,24 @@
       </div>
   </div>
 
+
       <!-- Content -->
       <div class="col d-flex text-center" style="width: 100vw">
         <main class="form-signin">
-          <form action="/change_icon" method="GET">
-            <h1 class="h2 mb-3 fw-normal">Profile</h1>
+          <form action="/profile" method="POST" enctype="multipart/form-data">
+            <h1 class="h3 mb-3 fw-normal">Profile</h1>
             <p></p>
             <!--This line need server data-->
             <% if (messages.info) { %>
-              <img class="rounded-circle me-2" src=<%=messages.info %> alt="" width="150" height="150"/>
+                <img class="rounded-circle me-2" src=<%=messages.info%> alt="" width="100" height="100"/>
             <% } %>
             <!--end-->
             <p></p>
-            <button class=" btn btn-outline-primary btn-lg" type="submit" id="btnSubmitIcon">Change Icon</button>
-            <p class="mb-4"></p>
-            <!--This two lines need server data-->
-            <p class="h5 mb-4 fw-normal">Name: <%= name %></p>
-            <p class="h5 mb-4 fw-normal">Email: <%= email %></p>
-            
-          </form>
-          <form action="/pwmod" method="GET">
-            <!--end-->
-            <button class=" btn btn-lg btn-danger" type="submit" id="btnChangePW">Change Password</button>
+            <div class="mb-3">
+              <label for="formFile" class="form-label">Upload New Icon</label>
+              <input class="form-control" type="file" name="profile_image" id="formFile">
+            </div>
+            <button class="w-100 btn btn-lg btn-primary" type="submit" id="btnSubmit">Change Icon</button>
           </form>
         </main>
       </div>
@@ -123,4 +118,3 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous"></script>
   </body>
 </html>
-
