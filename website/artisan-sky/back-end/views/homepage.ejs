@@ -148,8 +148,8 @@
                                 <img src="<%=post.file_path.replace('public', '')%>" alt="..." width="100%"/>
                                 </a>
                                 <div class="card-body">
-                                    <p class="card-text"><%= post.caption %></p>
-                                    <p class="card-text fs-6 lh-1 fst-italic p-2"><%= post.creater.name %></p>
+                                    <p class="card-text p-2"><%= post.caption %></p>
+                                    <p class="card-text fs-6 lh-1 fst-italic"><%= post.creater.name %></p>
                                     <p class="card-text fs-6 lh-1 fst-italic">
                                       <%
                                       var createTime = new Date(Number(post.createTime))
