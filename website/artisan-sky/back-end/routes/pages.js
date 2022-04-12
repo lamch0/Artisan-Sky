@@ -119,8 +119,14 @@ router.get("/adminprofile", checkAuthenticated, async (req, res) => {
 })
 
 router.get("/login", checkNotAuthenticated, (req, res) => {
-    req.flash('info', null)
-    res.render('login')
+     // const updateUser = await user.findOne({id: req.session.passport.user})
+    //if (updateUser.verified === true) {
+        req.flash('info', null)
+        res.render('login')    
+    //} else {
+        //req.flash('info', null)
+        //res.render('not_verified')
+    //}
 })
 
 // router.get("/adminlogin", checkAdminNotAuthenticated, (req, res) => {
