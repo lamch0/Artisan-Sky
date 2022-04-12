@@ -57,8 +57,17 @@ router.get('/new_post', checkAuthenticated, (req, res) => {
     }
 })
 
-router.get('/pwmod', checkAuthenticated, (req,res) => {
-    res.render('passwordmod')  
+router.get('/pwmod', checkAuthenticated, 
+async (req, res) => {
+    const updateUser = await user.findOne({id: req.session.passport.user})
+    // console.log(updateUser)
+    if (updateUser.user_type == 'user'){
+        var user_image = "/uploads/user_profile_images/" + updateUser.profile_image
+        req.flash('info', user_image)
+        req.flash('success', null)
+        req.flash('fail', null)
+        res.render('passwordmod', {name: updateUser.name, email: updateUser.email})
+    }
 })
 
 router.get("/test", (req, res) => {
