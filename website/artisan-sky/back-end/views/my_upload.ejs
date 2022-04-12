@@ -95,11 +95,11 @@
 
       <!-- Content -->
       <div class="col d-flex text-center" style="width: 100vw">
-        <% if (messages.info) { %>
-          <%= messages.info %>
-        <% } %>
+        
         <main class="form-signin">
-            
+          <% if (messages.info) { %>
+            <%= messages.info %>
+          <% } %> 
           <form method="POST" action="/upload_post" id="upload_post" enctype="multipart/form-data">
             <h1 class="h3 mb-3 fw-normal">New Post</h1>
             <p></p>
@@ -110,17 +110,17 @@
             </div>
            
             <div class="mb-3">
-              <label for="Textarea1" class="form-label">Caption</label>
-              <textarea class="form-control" id="Textarea1" rows="3"></textarea>
+              <label for="caption" class="form-label">Caption</label>
+              <textarea class="form-control" name="caption" id="caption" rows="3"></textarea>
             </div>
             <div id="modal_image_upload">
-                <div>
-                    <img id="preview" width="300" height="300">
-                </div>
-                <div>
-                  <button class="w-100 btn btn-lg btn-primary" type="submit" form="upload_post" id="btnSubmit">Post</button>
-                </div>
+              <div>
+                <img id="preview" width="300" height="300">
               </div>
+              <div>
+                <button class="w-100 btn btn-lg btn-primary" type="submit" form="upload_post" id="btnSubmit">Post</button>
+              </div>
+            </div>
           </form>
           
         </main>

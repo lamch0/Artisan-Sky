@@ -500,9 +500,11 @@ app.delete('/logout', (req, res) => {
 })
 
 app.post("/upload_post", checkAuthenticated, async function(req, res){
+  //console.log("upload caption: "+req.body.caption)
   var formData = new formidable.IncomingForm();
   formData.maxFileSize = 1000 * 1024 * 1024
   formData.parse(req, function(error1, fields, files){
+    //console.log("upload caption: "+JSON.stringify(fields))
     var oldPath = files.image.filepath
     var newPath = "public/uploads/post_images/" + new Date().getTime() + "-" + files.image.originalFilename
     fileSystem.rename(oldPath, newPath, async(error2)=>{
@@ -513,6 +515,7 @@ app.post("/upload_post", checkAuthenticated, async function(req, res){
       var currentTime = new Date().getTime()
 
         const newPost = new post({
+          caption: fields.caption,
           file_path: newPath,
           creater: creater,
           createTime: currentTime,
