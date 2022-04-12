@@ -197,7 +197,7 @@
                             <% if (typeof isLogin !== "undefined" && isLogin){ %>
                                 <form method="POST" action="/do_comment">
                                     <input type="hidden" class="form-control" name="_id" value="<%= gotPost._id %>" aria-label="Your comment" aria-describedby="basic-addon2">
-                                    <textarea class="form-control" name="comment" placeholder="Yout Comment" ></textarea>
+                                    <textarea class="form-control" name="comment" placeholder="Yout Comment" style="width: 100%"></textarea>
                                     <div class="input-group-append">
                                         <button class="btn btn-outline-secondary" type="submit">Send</button>
                                     </div>
