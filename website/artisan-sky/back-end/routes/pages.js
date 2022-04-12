@@ -34,7 +34,7 @@ router.get("/view_post", function(req, res){
     })
 })
 
-router.get('/my_posts', checkAuthenticated, (req, res) => {
+router.get('/new_post', checkAuthenticated, (req, res) => {
     if(req.session.passport.user){
         user.findOne({id: req.session.passport.user}, (logedInUser) => {
             post.find({"creater.id": req.session.passport.user})
