@@ -196,6 +196,13 @@ io.on('connection', socket => {
     // Broadcast when a user connects
     socket.broadcast.to(user.room)
     .emit('message', formatMsg(botName, `${user.username} has joined the chat`));
+
+    // Info sidebar
+    io.to(user.room)
+    .emit('roomUsers', {
+      room: user.room,
+      users: getRoomUsers(user.room)
+    }) 
   })
 
   // Listen for chatMessage
@@ -213,14 +220,14 @@ io.on('connection', socket => {
     if (user) {
       io.to(user.room)
       .emit('message', formatMsg(botName, `${user.username} has left the chat`));
-    }
 
-    // Info sidebar
-    io.to(user.room)
-    .emit('roomUsers', {
-      room: user.room,
-      users: getRoomUsers(user.room)
-    })  
+      // Info sidebar
+      io.to(user.room)
+      .emit('roomUsers', {
+        room: user.room,
+        users: getRoomUsers(user.room)
+      }) 
+    }
   });
 })
 
@@ -499,11 +506,11 @@ app.post("/upload_post", checkAuthenticated, async function(req, res){
     var oldPath = files.image.filepath
     var newPath = "public/uploads/post_images/" + new Date().getTime() + "-" + files.image.originalFilename
     fileSystem.rename(oldPath, newPath, async(error2)=>{
-      const creater = await user.findOne({ id: req.session.passport.user });
-        
-        delete creater.password
-        delete creater.id
-        var currentTime = new Date().getTime()
+      const creater = await user.findOne({ id: req.session.passport.user }, {email: 1, name: 1});
+      //console.log(JSON.stringify(creater))
+      // delete creater.password
+      // delete creater.id
+      var currentTime = new Date().getTime()
 
         const newPost = new post({
           file_path: newPath,
