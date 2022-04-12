@@ -148,21 +148,20 @@
                       
                                 <div class="card-body">
                                     <p class="card-text"><%= post.caption %></p>
+                                    <p class="card-text"></p>
+                                    <ul class="card-text">
+                                        <%
+                                        var createTime = new Date(Number(post.createTime))
+                                        var date = createTime.getDate() + ""
+                                        %>
+                                        <%= date.padStart(2, "0") + " " + months[createTime.getMonth()] + ", " + createTime.getFullYear() %>    
+                                    </ul>
+                                    <p class="card-text"><%= post.creater.name %></p>
                                     <div class="d-flex justify-content-between align-items-center">
                                         <div class="btn-group">
                                             <button type="button" class="btn btn-sm btn-outline-secondary">View</button>
                                             <button type="button" class="btn btn-sm btn-outline-secondary"><img src="./heart.png" width="16" height="16">
                                             </img></button>
-                                        </div>
-                                        <div>
-                                            <ul>
-                                                <%
-                                                var createTime = new Date(Number(post.createTime))
-                                                var date = createTime.getDate() + ""
-                                                %>
-                                                <%= date.padStart(2, "0") + " " + months[createTime.getMonth()] + ", " + createTime.getFullYear() %>    
-                                            </ul>
-                                            <h5><%= post.creater.name %></h5>
                                         </div>
                                     </div>
                                 </div>
