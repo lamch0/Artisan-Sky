@@ -175,11 +175,6 @@ router.get('/waitForVeri',checkNotAuthenticated, (req, res) => {
 })
 
 
-<<<<<<< HEAD
-router.get("/my_posts", checkAuthenticated, (req, res) => {
-    req.flash('info', null)
-    res.render('my_posts.ejs')
-=======
 router.get("/my_posts", checkAuthenticated, async (req, res) => {
         const User = await user.findOne({id: req.session.passport.user})
         var user_image = "/uploads/user_profile_images/" + User.profile_image
@@ -207,7 +202,6 @@ router.get("/my_posts", checkAuthenticated, async (req, res) => {
             }
         })
     
->>>>>>> dd8c78fbbdbdf3f0489672818c48d0c0a3ce99d6
 })
 
 function checkAuthenticated(req, res, next){
