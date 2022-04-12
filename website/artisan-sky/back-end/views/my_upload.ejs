@@ -95,11 +95,11 @@
 
       <!-- Content -->
       <div class="col d-flex text-center" style="width: 100vw">
-        <% if (messages.info) { %>
-          <%= messages.info %>
-        <% } %>
+        
         <main class="form-signin">
-            
+          <% if (messages.info) { %>
+            <%= messages.info %>
+          <% } %> 
           <form method="POST" action="/upload_post" id="upload_post" enctype="multipart/form-data">
             <h1 class="h3 mb-3 fw-normal">New Post</h1>
             <p></p>
