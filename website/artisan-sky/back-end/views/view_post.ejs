@@ -122,7 +122,7 @@
                             dy=".3em">Thumbnail</text>
                             
                     </svg> -->
-                    <img src="<%=gotPost.file_path.replace('public', '')%>" alt="..." width="100%" height="100%"/>
+                    <img src="<%=gotPost.file_path.replace('public', '')%>" alt="..." width="70%" height="70%"/>
                     
                     <div class="card-body">
                         <!-- <p class="card-text">Your caption here.</p> -->
@@ -196,7 +196,7 @@
                             <% if (typeof isLogin !== "undefined" && isLogin){ %>
                                 <form method="POST" action="/do_comment">
                                     <input type="hidden" class="form-control" name="_id" value="<%= gotPost._id %>" aria-label="Your comment" aria-describedby="basic-addon2">
-                                    <textarea name="comment" placeholder="Yout Comment" ></textarea>
+                                    <textarea class="form-control" name="comment" placeholder="Yout Comment" ></textarea>
                                     <div class="input-group-append">
                                         <button class="btn btn-outline-secondary" type="submit">Send</button>
                                     </div>
