@@ -69,7 +69,7 @@
             <strong><%= name %></strong>
             </a>
             <ul class="dropdown-menu dropdown-menu-dark text-small shadow" aria-labelledby="dropdownUser1">
-            <li><a class="dropdown-item" href="/new_post">New post</a></li>
+            <li><a class="dropdown-item" href="/my_posts">New post</a></li>
             <li><a class="dropdown-item" href="/profile">Profile</a></li>
             <li>
                 <hr class="dropdown-divider">
@@ -149,14 +149,14 @@
                                 <div class="card-body">
                                     <p class="card-text"><%= post.caption %></p>
                                     <p class="card-text"></p>
-                                    <ul class="card-text">
+                                    <ul class="h6">
                                         <%
                                         var createTime = new Date(Number(post.createTime))
                                         var date = createTime.getDate() + ""
                                         %>
-                                        <%= date.padStart(2, "0") + " " + months[createTime.getMonth()] + ", " + createTime.getFullYear() %>    
+                                        <%= date.padStart(2, "0") + " " + months[createTime.getMonth()] + ", " + createTime.getFullYear() %>
                                     </ul>
-                                    <p class="card-text"><%= post.creater.name %></p>
+                                    <p class="h6"><%= post.creater.name %></p>
                                     <div class="d-flex justify-content-between align-items-center">
                                         <div class="btn-group">
                                             <button type="button" class="btn btn-sm btn-outline-secondary">View</button>
