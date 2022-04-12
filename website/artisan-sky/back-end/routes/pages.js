@@ -200,7 +200,7 @@ router.get("/my_posts", checkAuthenticated, async (req, res) => {
         const User = await user.findOne({id: req.session.passport.user})
         var user_image = "/uploads/user_profile_images/" + User.profile_image
         
-        post.find()
+        post.find({"creater.name": User.name})
         .sort({createTime: -1})
         .exec(function(err, posts){
             if(req.session.passport){
