@@ -16,12 +16,16 @@ router.use(express.static(__dirname + '../views/chat_room'));
 router.get("/view_post", function(req, res){
     post.findOne({ "_id": req.query._id }, function (error, gotPost){
         if(req.session.passport){
-            user.findOne({id: req.session.passport.user}, (logedInUser) => {
+            user.findOne({id: req.session.passport.user}, async (logedInUser) => {
+                const updateUser = await user.findOne({id: req.session.passport.user})
+                var user_image = "/uploads/user_profile_images/" + updateUser.profile_image
+                req.flash('info', user_image)
                 res.render("view_post", {
                     "isLogin": true,
                     "query": req.query,
                     "gotPost": gotPost,
-                    "creater": logedInUser
+                    "creater": logedInUser,
+                    "name": updateUser.name,
                 })
             })
         } else {
