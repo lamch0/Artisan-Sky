@@ -150,19 +150,21 @@
                                     <p class="card-text"><%= post.caption %></p>
                                     
                                     <div class="d-flex">
-                                      <div class="btn-group">
+                                      <div class="btn-group col">
                                         <button type="button" class="btn btn-sm btn-outline-secondary">View</button>
                                         <button type="button" class="btn btn-sm btn-outline-secondary"><img src="./heart.png" width="16" height="16">
                                         </img></button>
                                       </div>
-                                      <ul class="h8">
+                                      <div class="col">
+                                      <ul class="fs-6 row">
                                         <%
                                         var createTime = new Date(Number(post.createTime))
                                         var date = createTime.getDate() + ""
                                         %>
                                         <%= date.padStart(2, "0") + " " + months[createTime.getMonth()] + ", " + createTime.getFullYear() %>
                                       </ul>
-                                      <p class="h8"><%= post.creater.name %></p>
+                                      <p class="fs-6 row"><%= post.creater.name %></p>
+                                      </div>
                                     </div>
                                 </div>
                             </div>
