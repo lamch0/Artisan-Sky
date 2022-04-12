@@ -40,11 +40,15 @@ router.get('/my_posts', checkAuthenticated, (req, res) => {
             post.find({"creater.id": req.session.passport.user})
             .sort({
                 createTime: -1
-            }).exec( (error1, result) => {
+            }).exec( async (error1, result) => {
+                const updateUser = await user.findOne({id: req.session.passport.user})
+                var user_image = "/uploads/user_profile_images/" + updateUser.profile_image
+                req.flash('image', user_image)
                 res.render("my_upload", {
                     "query": req.query,
                     "posts": result,
-                    "user": logedInUser
+                    "user": logedInUser,
+                    name: updateUser.name
                 })
             })
         })
