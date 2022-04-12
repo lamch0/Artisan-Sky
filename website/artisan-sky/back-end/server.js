@@ -527,8 +527,9 @@ app.post("/upload_post", checkAuthenticated, async function(req, res){
     var oldPath = files.image.filepath
     var newPath = "public/uploads/post_images/" + new Date().getTime() + "-" + files.image.originalFilename
     fileSystem.rename(oldPath, newPath, async(error2)=>{
-      const creater = await user.findOne({ id: req.session.passport.user }, {email: 1, id: 1, name: 1});
-      //console.log(JSON.stringify(creater))
+      const creater = await user.findOne({ id: req.session.passport.user })//, {email: 1, id: 1, name: 1});
+      
+      console.log(JSON.stringify(creater))
       // delete creater.password
       // delete creater.id
       var currentTime = new Date().getTime()
