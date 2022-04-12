@@ -1,6 +1,9 @@
 const mongoose = require('mongoose');
 
 const postSchema = new mongoose.Schema({
+    caption: {
+      type: String
+    },
     file_path: {
       type: String,
       require: true
@@ -12,8 +15,7 @@ const postSchema = new mongoose.Schema({
           },
           id: {
             type: String,
-            require: true,
-            unique: true
+            require: true
           },
           email: {
             type: String,
