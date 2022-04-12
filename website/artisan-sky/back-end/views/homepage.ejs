@@ -149,7 +149,14 @@
                                 </a>
                                 <div class="card-body">
                                     <p class="card-text"><%= post.caption %></p>
-                                    
+                                    <p class="card-text fs-6"><%= post.creater.name %></p>
+                                    <p class="card-text fs-6">
+                                      <%
+                                      var createTime = new Date(Number(post.createTime))
+                                      var date = createTime.getDate() + ""
+                                      %>
+                                      <%= date.padStart(2, "0") + " " + months[createTime.getMonth()] + ", " + createTime.getFullYear() %>
+                                    </p>
                                     <div class="d-flex" style="width: 100%">
                                       <a href="/view_post?_id=<%= post._id%>">
                                       <div class="btn-group d-flex align-items-start justify-content-start">
@@ -159,15 +166,6 @@
                                       </div>
                                       </a>
                                       <div class="d-flex align-items-end justify-content-end">
-                                      <p class="fs-6 d-flex align-items-end justify-content-end">
-                                        &nbsp;&nbsp;&nbsp;&nbsp;
-                                        <%
-                                        var createTime = new Date(Number(post.createTime))
-                                        var date = createTime.getDate() + ""
-                                        %>
-                                        <%= date.padStart(2, "0") + " " + months[createTime.getMonth()] + ", " + createTime.getFullYear() %>
-                                      </p>
-                                      <p class="fs-6 d-flex align-items-end justify-content-end">&nbsp;&nbsp;&nbsp;&nbsp;<%= post.creater.name %></p>
                                       </div>
                                     </div>
                                 </div>
