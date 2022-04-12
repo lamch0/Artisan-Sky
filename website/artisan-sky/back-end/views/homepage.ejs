@@ -155,15 +155,15 @@
                                         <button type="button" class="btn btn-sm btn-outline-secondary"><img src="./heart.png" width="16" height="16">
                                         </img></button>
                                       </div>
-                                      <div class="col">
-                                      <ul class="fs-6 row">
+                                      <div>
+                                      <p class="fs-6">
                                         <%
                                         var createTime = new Date(Number(post.createTime))
                                         var date = createTime.getDate() + ""
                                         %>
                                         <%= date.padStart(2, "0") + " " + months[createTime.getMonth()] + ", " + createTime.getFullYear() %>
-                                      </ul>
-                                      <p class="fs-6 row"><%= post.creater.name %></p>
+                                      </p>
+                                      <p class="fs-6"><%= post.creater.name %></p>
                                       </div>
                                     </div>
                                 </div>
