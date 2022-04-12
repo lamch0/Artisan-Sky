@@ -169,9 +169,33 @@ router.get('/waitForVeri',checkNotAuthenticated, (req, res) => {
 })
 
 
-router.get("/my_posts", checkAuthenticated, (req, res) => {
-    // req.flash('info', null)
-    res.render('my_posts.ejs')
+router.get("/my_posts", checkAuthenticated, async (req, res) => {
+        const User = await user.findOne({id: req.session.passport.user})
+        var user_image = "/uploads/user_profile_images/" + User.profile_image
+        
+        post.find()
+        .sort({createTime: -1})
+        .exec(function(err, posts){
+            if(req.session.passport){
+                    req.flash('pic', posts.file_path)
+                    req.flash('image', user_image)
+                    return res.render('my_posts.ejs', {
+                        "isLogin": true,
+                        "query": req.query,
+                        "user": User,
+                        "posts": posts,
+                        name: User.name
+                    })
+            }else{
+                
+                return res.render('my_posts.ejs', {
+                    "isLogin": false,
+                    "query": req.query,
+                    "posts": posts,
+                })
+            }
+        })
+    
 })
 
 function checkAuthenticated(req, res, next){
