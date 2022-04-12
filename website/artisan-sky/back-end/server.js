@@ -463,7 +463,7 @@ app.put('/resetpw', checkAuthenticated, async (req, res) => {
 })
 
 app.get('/getusers', checkAuthenticated, async (req, res) => {
-  user.find({user_type: "user"},
+  user.find({},
     (err, users) =>{
       if (err)
         res.redirect('/adminprofile')
