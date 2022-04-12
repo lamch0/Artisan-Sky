@@ -60,10 +60,34 @@
           </ul>
         <hr>
         <div class="dropdown">
-          <a href="/login" class="d-flex align-items-center text-white text-decoration-none" id="dropdownUser1"  aria-expanded="false">
-            <strong>Login</strong>
-          </a>
+          <% if(typeof isLogin !== 'undefined' && isLogin) { %>
+            <a href="#" class="d-flex align-items-center text-white text-decoration-none dropdown-toggle"
+            id="dropdownUser1" data-bs-toggle="dropdown" aria-expanded="false">
+            <% if (messages.info) { %>
+            <img src=<%= messages.info %> alt="" width="32" height="32" class="rounded-circle me-2"/>
+            <% } %>
+            <strong><%= name %></strong>
+            </a>
+            <ul class="dropdown-menu dropdown-menu-dark text-small shadow" aria-labelledby="dropdownUser1">
+            <li><a class="dropdown-item" href="/my_posts">New post</a></li>
+            <li><a class="dropdown-item" href="/profile">Profile</a></li>
+            <li>
+                <hr class="dropdown-divider">
+            </li>
+            <li><form action="/logout?_method=DELETE" method = "POST">
+                <button class="dropdown-item" type="submit">Sign Out</button>
+            </form></li>
+            </ul>
+
+          <% } else { %>
+            
+            <a href="/login" class="d-flex align-items-center text-white text-decoration-none" id="dropdownUser1"  aria-expanded="false">
+              <strong>Login</strong>
+            </a>
+            
+          <% } %>
         </div>
+
       </nav>
 
       <script>

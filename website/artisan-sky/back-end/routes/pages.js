@@ -79,14 +79,20 @@ router.get("/", async (req, res) => {
     .sort({createTime: -1})
     .exec(function(err, posts){
         if(req.session.passport){
-            const User = user.findOne({id: req.session.passport.user})
+             user.findOne({id: req.session.passport.user}, (error, User)=>{
                 req.flash('pic', posts.file_path)
+                var user_image = "/uploads/user_profile_images/" + User.profile_image
+                req.flash('info', user_image)
+            
                 return res.render('homepage.ejs', {
                     "isLogin": true,
                     "query": req.query,
                     "user": User,
-                    "posts": posts
+                    "posts": posts,
+                    name: User.name
                 })
+             })
+                
         }else{
             return res.render('homepage.ejs', {
                 "isLogin": false,
