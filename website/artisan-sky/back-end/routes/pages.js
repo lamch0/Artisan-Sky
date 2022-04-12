@@ -159,6 +159,12 @@ router.get('/waitForVeri',checkNotAuthenticated, (req, res) => {
 
 })
 
+
+router.get("/my_posts", checkNotAuthenticated, (req, res) => {
+    // req.flash('info', null)
+    res.render('my_posts.ejs')
+})
+
 function checkAuthenticated(req, res, next){
     if (req.isAuthenticated()){
         return next()
@@ -179,5 +185,7 @@ function checkNotAuthenticated(req, res, next){
 //     }
 //     next()
 // }
+
+
 
 module.exports = router;
