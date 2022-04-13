@@ -180,9 +180,16 @@ router.get("/register", checkNotAuthenticated, (req, res) => {
 })
 
 
-router.get("/chatroom", (req,res)=>{
-    req.flash('info', null)
-    res.render('chat_room/chat_room.ejs')
+router.get("/chatroom", async (req,res)=>{
+    const User = await user.findOne({id: req.session.passport.user})
+    var user_image = "/uploads/user_profile_images/" + User.profile_image
+    req.flash('info', user_image)
+    res.render('chat_room/chat_room.ejs', {
+        "isLogin": true,
+        "query": req.query,
+        "user": User,
+        name: User.name
+    })
 })
 
 router.get("/chat", (req,res)=>{
