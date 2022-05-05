@@ -131,6 +131,7 @@ app.use(passport.session())
 app.use(methodOverride('_method'))
 app.use(express.static( "public" ))
 app.use(express.static( "views" ))
+app.use(express.static(__dirname + '../views/chat_room'));
 //Parse URL-encoded bodies (as sent by HTML)
 app.use(express.urlencoded({ extended: false}))
 //Parse JSON bodies (as sent by API)
@@ -307,7 +308,7 @@ app.get("/user/verified/:userId/:uniqueString", (req,res) => {
             .then(()=>{
               UserVerification.deleteOne({userId})
               .then(()=>{
-                res.render("waitForVeri.ejs")
+                res.render("verified.ejs")
               })
               .catch((err)=>{
                 console.log(err);
