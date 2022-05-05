@@ -1,3 +1,13 @@
+/*
+*
+* PROGRAM User model - define the user model 
+* PROGRAMMER: Poon Tsz Fung(1155142944), Lam Lok Hin(1155143373)
+* VERSION 2.3: written 05/05/2022
+* PURPOSE: The define the structure of a user
+* METHOD: Use mongoose.Schema and export as 'user'
+*
+*/
+
 const mongoose = require('mongoose');
 
 const userSchema = new mongoose.Schema({

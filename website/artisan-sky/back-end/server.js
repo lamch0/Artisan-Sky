@@ -1,3 +1,15 @@
+/*
+*
+* PROGRAM Server - handle most of the function in the website
+* PROGRAMMER: Poon Tsz Fung(1155142944), Lam Cheuk Hin(1155143825), Lam Lok Hin(1155143373)
+* VERSION 2.3: written 05/05/2022
+* PURPOSE: As the back-end server of Artisan's Sky, to handle different action like login, register, logout,
+*          authentication, post, real time chat room
+* METHOD: Use Nodejs as main include other extension like express, Use mongoDB as the database
+*
+*/
+
+
 if(process.env.NODE_ENV !== 'production'){
   require('dotenv').config()
 }
@@ -65,6 +77,8 @@ transporter.verify((err, e)=>{
     // console.log("ready for messages");
   }
 })
+
+// Define the storage location of the user profile picture uploaded
 const storage = multer.diskStorage({
   //destination for files
   destination: function (req, file, callback) {
@@ -85,6 +99,8 @@ const upload = multer({
  }
 })
 
+
+//initialize the passport session for the user when they register and login 
 initializePassport(
   passport,
   async (email) => {
@@ -97,14 +113,6 @@ initializePassport(
     return userFound;
   }
 )
-
-// initializeAdminPassport(
-//     passport,
-//     async (id) => {
-//       const adminFound = await admin.findOne({id: id});
-//       return adminFound;
-//   }
-// )
 
 
 app.use(morgan(":method :url :status :res[content-length] - :response-time ms"))
@@ -138,17 +146,12 @@ app.post('/login', checkNotAuthenticated, passport.authenticate('local', {
   failureFlash: true
 }))
 
-// app.post('/adminlogin', checkAdminNotAuthenticated, passport.authenticate('local', {
-//   successRedirect: '/adminprofile',
-//   failureRedirect: '/adminlogin',
-//   failureFlash: true
-// }))
-
+//Get the register input from user and compare with database if valid then create new user and redirect to login page
 app.post('/register', checkNotAuthenticated, async (req, res) => {
   try {
-      const { name, email, password, passwordConfirm } = req.body
-      const userExists = await user.findOne({ email: email})
-      if(userExists){
+      const { name, email, password, passwordConfirm } = req.body //get the input from user
+      const userExists = await user.findOne({ email: email})      //compare with database
+      if(userExists){                                             
         req.flash('info', 'That email is already in use')
         return res.render('register')
       } else if (password !== passwordConfirm){
@@ -156,9 +159,9 @@ app.post('/register', checkNotAuthenticated, async (req, res) => {
         return res.render('register')
       } else {
         try{
-          const hashedPassword = await bcrypt.hash(password, 10)
-          const id = Date.now().toString();
-          const newUser = new user({
+          const hashedPassword = await bcrypt.hash(password, 10)  //hash user input password for security 
+          const id = Date.now().toString();                       //generate user id
+          const newUser = new user({                              //create new user
             name: name,
             email: email,
             id: id,
@@ -166,7 +169,6 @@ app.post('/register', checkNotAuthenticated, async (req, res) => {
             verified: false,
           })
           await newUser.save()
-          //console.log(req.body)
           .then((result)=>{
             // email verification
             sendVeriEmail(result, res);
@@ -189,8 +191,6 @@ io.on('connection', socket => {
   socket.on('joinRoom', ({username, room})=>{
     const user = userJoin(socket.id, username, room);
     socket.join(room);
-
-
     socket.emit('message', formatMsg(botName, 'Welcome to the Real-time Chat Room!'));
 
     // Broadcast when a user connects
@@ -256,13 +256,9 @@ const sendVeriEmail = ({_id, email}, res) => {
       .then(()=>{
         transporter.sendMail(mailOptions)
         .then(()=>{
-          // res.json({
-          //   status: "Pending"
-          // })
         })
         .catch((err)=>{
           console.log(err)
-          // res.status(404).send("Error of verification email");  
         })
         
       })
@@ -286,8 +282,6 @@ app.get("/user/verified/:userId/:uniqueString", (req,res) => {
       const {expiresAt} = result[0];
       const hashedUniqueString = result[0].uniqueString;
       if (expiresAt < Date.now()) {
-        // console.log(expiresAt)
-        // console.log(Date.now)
         UserVerification.deleteOne({userId})
         .then(result=>{
           user.deleteOne({_id: userId})
@@ -313,7 +307,6 @@ app.get("/user/verified/:userId/:uniqueString", (req,res) => {
             .then(()=>{
               UserVerification.deleteOne({userId})
               .then(()=>{
-                // res.sendFile(path.join(__dirname, "./views/verified.ejs"))
                 res.render("verified.ejs")
               })
               .catch((err)=>{
@@ -353,11 +346,13 @@ app.get("/user/verified", (req, res) => {
   res.sendFile(path.join(__dirname, "./views/verified.ejs"));
 })
 
+//Get user uploaded profile picture and store the path to database and show the photo in the website
 app.post('/profile', upload.single('profile_image'), checkAuthenticated, async (req, res) => {
   try{
-    //console.log("req.session: "+ req.session.passport.user)
-    let updateUser = await user.findOneAndUpdate({id: req.session.passport.user}, {profile_image: req.file.filename}, {new: true})
-    user_image = "/uploads/user_profile_images/" + updateUser.profile_image
+    let updateUser = await user.findOneAndUpdate({id: req.session.passport.user},       //get the user by user id and update photo
+                                                 {profile_image: req.file.filename}, 
+                                                 {new: true})
+    user_image = "/uploads/user_profile_images/" + updateUser.profile_image             //get photo path 
     req.flash('info', user_image)
     const User = await user.findOne({id: req.session.passport.user})
     return res.render('index', {name: User.name, email: User.email})
@@ -518,20 +513,17 @@ app.delete('/logout', (req, res) => {
   res.redirect('/login')
 })
 
+
+//Get the post uploaded and store to database and show on website
 app.post("/upload_post", checkAuthenticated, async function(req, res){
-  //console.log("upload caption: "+req.body.caption)
-  var formData = new formidable.IncomingForm();
+  var formData = new formidable.IncomingForm();                         
   formData.maxFileSize = 1000 * 1024 * 1024
   formData.parse(req, function(error1, fields, files){
-    //console.log("upload caption: "+JSON.stringify(fields))
     var oldPath = files.image.filepath
     var newPath = "public/uploads/post_images/" + new Date().getTime() + "-" + files.image.originalFilename
     fileSystem.rename(oldPath, newPath, async(error2)=>{
-      const creater = await user.findOne({ id: req.session.passport.user })//, {email: 1, id: 1, name: 1});
-      
+      const creater = await user.findOne({ id: req.session.passport.user })
       console.log(JSON.stringify(creater))
-      // delete creater.password
-      // delete creater.id
       var currentTime = new Date().getTime()
 
         const newPost = new post({
@@ -552,40 +544,43 @@ app.post("/upload_post", checkAuthenticated, async function(req, res){
   })
 })
 
-app.post("/do_like", (req, res) => {
-  if(req.session.passport){
-    post.findOne({ "_id": req.body._id, "likers._id": req.session.passport.user}, (error, video) => {
-      if(video == null){
-        post.updateOne({"_id": req.body._id}, {
-          $push:{
-            "likers": {
-              "_id": req.session.passport.user
-            }
-          }
-        }, (error, data)=>{
-          res.json({
-            "status": "success",
-            "message": "Image has been liked"
-          })
-        })
-      } else {
-        res.json({
-          "status": "success",
-          "message": "You have already liked this image."
-        })
-      }
-    })
-  } else{
-    res.json({
-      "status": "error",
-      "message": "Please login to like"
-    })
-  }
-})
 
+//do like function not yet finish
+// app.post("/do_like", (req, res) => {
+//   if(req.session.passport){
+//     post.findOne({ "_id": req.body._id, "likers._id": req.session.passport.user}, (error, video) => {
+//       if(video == null){
+//         post.updateOne({"_id": req.body._id}, {
+//           $push:{
+//             "likers": {
+//               "_id": req.session.passport.user
+//             }
+//           }
+//         }, (error, data)=>{
+//           res.json({
+//             "status": "success",
+//             "message": "Image has been liked"
+//           })
+//         })
+//       } else {
+//         res.json({
+//           "status": "success",
+//           "message": "You have already liked this image."
+//         })
+//       }
+//     })
+//   } else{
+//     res.json({
+//       "status": "error",
+//       "message": "Please login to like"
+//     })
+//   }
+// })
+
+//Get user comment and store to post database and show all the comments on the post page
 app.post("/do_comment", (req, res) => {
   if(req.session.passport){
-    var comment = req.body.comment
+    var comment = req.body.comment                                      //get the user input comments
     var _id = req.body._id 
     console.log("id: "+req.session.passport.user)
     console.log("session: "+req.session.passport)
@@ -616,7 +611,6 @@ app.post("/do_comment", (req, res) => {
 //Function to cheack if the user is authenticated if yes the continuse request, else stay in login page
 function checkAuthenticated(req, res, next){
   if (req.isAuthenticated()){
-    //console.log("User authenticated " + req.session.passport.user)
     return next()
   }
   console.log("User not authenticated, returning to login")
@@ -629,25 +623,8 @@ function checkNotAuthenticated(req, res, next){
     console.log("User authenticated, returning to profile")
     return res.redirect('/profile')
   }
-  //console.log("User authenticated " + req.session.passport.user)
   next()
 }
-
-// function checkAdminAuthenticated(req,res,next){
-//   if (req.isAuthenticated()){
-//     return next()
-//   }
-//   console.log("Admin not authenticated, returning to login")
-//   res.redirect('/adminlogin')
-// }
-
-// function checkAdminNotAuthenticated(req,res,next){
-//   if (req.isAuthenticated()){
-//     console.log("Admin authenticated, returning to admin profile")
-//     return res.redirect('/adminprofile')
-//   }
-//   next()
-// }
 
 //print what port we are listening
 const port = process.env.PORT || 8080
