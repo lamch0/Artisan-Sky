@@ -233,7 +233,7 @@ io.on('connection', socket => {
 
 // send verification email
 const sendVeriEmail = ({_id, email}, res) => {
-  const currentUrl = "http://100.26.109.239:8080/"
+  const currentUrl = "http://44.203.239.222:8080/"
   const uniqueString = uuidv4() + _id;
   // mail options
   const mailOptions= {

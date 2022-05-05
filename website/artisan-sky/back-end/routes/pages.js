@@ -1,6 +1,12 @@
-//
-//This pages.js is use to render to corresponding pages by request
-//
+/*
+*
+* PROGRAM Pages - use to render corresponding page to user
+* PROGRAMMER: Poon Tsz Fung(1155142944)
+* VERSION 2.3: written 05/05/2022
+* PURPOSE: This pages.js is use to render to corresponding pages by request
+* METHOD: Use mongoose.Schema and export as 'post'
+*
+*/
 const express = require('express')
 const router = express.Router()
 const mongoose = require('mongoose');
@@ -49,26 +55,6 @@ router.get('/new_post', checkAuthenticated, async (req, res) => {
             "user": updateUser,
             name: updateUser.name
         })
-
-
-
-
-        // user.findOne({id: req.session.passport.user}, (logedInUser) => {
-        //     post.find({"creater.id": req.session.passport.user})
-        //     .sort({
-        //         createTime: -1
-        //     }).exec( async (error1, result) => {
-        //         const updateUser = await user.findOne({id: req.session.passport.user})
-        //         var user_image = "/uploads/user_profile_images/" + updateUser.profile_image
-        //         req.flash('image', user_image)
-        //         res.render("my_upload", {
-        //             "query": req.query,
-        //             "posts": result,
-        //             "user": logedInUser,
-        //             name: updateUser.name
-        //         })
-        //     })
-        // })
     }else{
         res.redirect('/login')
     }
@@ -142,13 +128,7 @@ router.get("/change_icon", checkAuthenticated, async (req, res) =>{
     res.render("change_icon", {name: updateUser.name})
 })
 
-// router.get("/profile",  checkAuthenticated, async (req, res) => {
-//     const updateUser = await user.findOne({id: req.session.passport.user})
-//     // console.log(updateUser)
-//     var user_image = "/uploads/user_profile_images/" + updateUser.profile_image
-//     req.flash('info', user_image)
-//     res.render('index.ejs')
-// })
+
 
 router.get("/adminprofile", checkAuthenticated, async (req, res) => {
     const updateUser = await user.findOne({id: req.session.passport.user})
@@ -159,20 +139,10 @@ router.get("/adminprofile", checkAuthenticated, async (req, res) => {
 })
 
 router.get("/login", checkNotAuthenticated, (req, res) => {
-     // const updateUser = await user.findOne({id: req.session.passport.user})
-    //if (updateUser.verified === true) {
         req.flash('info', null)
         res.render('login')    
-    //} else {
-        //req.flash('info', null)
-        //res.render('not_verified')
-    //}
 })
 
-// router.get("/adminlogin", checkAdminNotAuthenticated, (req, res) => {
-//     req.flash('info', null)
-//     res.render('adminlogin')
-// })
 
 router.get("/register", checkNotAuthenticated, (req, res) => {
     req.flash('info', null)
@@ -254,14 +224,6 @@ function checkNotAuthenticated(req, res, next){
     }
     next()
 }
-
-// function checkAdminNotAuthenticated(req, res, next){
-//     if (req.isAuthenticated()){
-//         return res.redirect('/adminprofile')
-//     }
-//     next()
-// }
-
 
 
 module.exports = router;
