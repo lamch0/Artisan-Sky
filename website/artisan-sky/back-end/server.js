@@ -307,7 +307,7 @@ app.get("/user/verified/:userId/:uniqueString", (req,res) => {
             .then(()=>{
               UserVerification.deleteOne({userId})
               .then(()=>{
-                res.render("verified.ejs")
+                res.render("waitForVeri.ejs")
               })
               .catch((err)=>{
                 console.log(err);
