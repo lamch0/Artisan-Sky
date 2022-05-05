@@ -343,7 +343,8 @@ app.get("/user/verified/:userId/:uniqueString", (req,res) => {
 })
 
 app.get("/user/verified", (req, res) => {
-  res.sendFile(path.join(__dirname, "./views/verified.ejs"));
+  //res.sendFile(path.join(__dirname, "./views/verified.ejs"));
+  res.render("verified.ejs")
 })
 
 //Get user uploaded profile picture and store the path to database and show the photo in the website
