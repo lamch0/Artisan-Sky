@@ -373,9 +373,6 @@ app.put('/pwmod', checkAuthenticated,
     if (updateUser.user_type == 'user'){
         var user_image = "/uploads/user_profile_images/" + updateUser.profile_image
         req.flash('info', user_image)
-        // req.flash('success', null)
-        // req.flash('fail', null)
-        //res.render('passwordmod', {name: updateUser.name, email: updateUser.email})
     }
     // console.log("User: "+ req.session.passport.user)
     console.log(req.body)
@@ -421,6 +418,7 @@ app.put('/pwmod', checkAuthenticated,
   }
 )
 
+// redirects to admin profile page
 app.post('/adminprofile', upload.single('profile_image'), checkAuthenticated, async (req, res) => {
   try{
     let updateUser = await user.findOneAndUpdate({id: req.session.passport.user}, {profile_image: req.file.filename}, {new: true})
@@ -433,6 +431,7 @@ app.post('/adminprofile', upload.single('profile_image'), checkAuthenticated, as
     }
 })
 
+// performs password resetting action from the /manageusers? page of admin user
 app.put('/resetpw', checkAuthenticated, async (req, res) => {
   try{
     //console.log("in resetpw put body: "+ req.body.id)
@@ -459,6 +458,7 @@ app.put('/resetpw', checkAuthenticated, async (req, res) => {
   }
 })
 
+//  gets list of all users in database to render in /manageusers?
 app.get('/getusers', checkAuthenticated, async (req, res) => {
   user.find({},
     (err, users) =>{
@@ -477,6 +477,8 @@ app.get('/getusers', checkAuthenticated, async (req, res) => {
     })
 })
 
+
+// renders page of /manageusers? from the admin profile
 app.get('/manageusers', checkAuthenticated, async (req, res) => {
   try{
     const updateUser = await user.findOne({id: req.session.passport.user})
@@ -490,6 +492,7 @@ app.get('/manageusers', checkAuthenticated, async (req, res) => {
   }
 })
 
+// formats the info to be used in getusers function
 function user_info(id, name, email){
   return(`  <tr name="user">
     <th name="id" scope="row">${id}</th>
@@ -501,9 +504,6 @@ function user_info(id, name, email){
   </tr>
 `)
 }
-{/* <form action="/resetpw?_method=PUT" method="POST">
-  <button name="id_to_reset" value="${id}" class="btn btn-primary" type="button">Reset password</button>
-</form> */}
 
 
 //Get log out request 
