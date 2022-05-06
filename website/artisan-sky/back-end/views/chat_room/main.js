@@ -1,3 +1,13 @@
+/*
+*
+* PROGRAM Pages - Use to maintain the chatroom
+* PROGRAMMER: Lam Cheuk Hin(1155143825)
+* VERSION 2.3: written 05/05/2022
+* PURPOSE: This main.js is to maintain chatroom and output message accordingly
+* METHOD: Use socket.io as help for the message sending
+*
+*/
+
 const chatForm = document.getElementById('chat-form');
 const chatMessages = document.querySelector('.chat-messages');
 const roomName = document.getElementById('room-name');

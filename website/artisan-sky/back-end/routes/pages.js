@@ -1,7 +1,7 @@
 /*
 *
 * PROGRAM Pages - use to render corresponding page to user
-* PROGRAMMER: Poon Tsz Fung(1155142944), Lam Lok Hin(1155143373)
+* PROGRAMMER: Poon Tsz Fung(1155142944), Lam Lok Hin(1155143373), Lam Cheuk Hin(1155143825)
 * VERSION 2.3: written 05/05/2022
 * PURPOSE: This pages.js is use to render to corresponding pages by request
 * METHOD: Use mongoose.Schema and export as 'post'

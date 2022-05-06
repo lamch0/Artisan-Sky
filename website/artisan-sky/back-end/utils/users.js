@@ -1,3 +1,13 @@
+/*
+*
+* PROGRAM Pages - use to get the user's status and give corresponding actions
+* PROGRAMMER: Lam Cheuk Hin(1155143825)
+* VERSION 2.3: written 05/05/2022
+* PURPOSE: This user.js is to get the user's status and give corresponding actions
+* METHOD: Use mongoose find to get user
+*
+*/
+
 const users = [];
 
 // Join user to chat
