@@ -1,6 +1,4 @@
-# CSCI3100_Project_A2
-
-## Artisan’s Sky
+# Artisan’s Sky
 Link: http://44.203.239.222:8080/
 
 ## Initial Ideas
