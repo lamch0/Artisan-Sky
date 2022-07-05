@@ -1,20 +1,8 @@
 # Artisan’s Sky
 Link: http://44.203.239.222:8080/
 
-## Initial Ideas
-1. Requests (Tui T) (Products) (buy/sell/bid)
-2. Better version of CUTS
-3. NEW CUHK Secret
-
->>>>>>>
-Lam Cheuk Hin 1155143825
-Lam Lok Hin 1155143373
-Poon Tsz Fung 1155142944
-Ching Ho Yin1155141930
-Ng Chi Kit 1155142020
-
-## Final Topic
-Products Platform
+## Project Overview
+Famous exhibitions of creations and artwork are often in physical forms that require a venue with extensive manpower and resources. The entry-level of such exhibitions is evidently not for everyone to share, promote and perform transactions related to their work. Artisan’s Sky is a web-based software targeting specifically societies in colleges and universities as well as the public to serve as a platform targeted in exchanging artwork and designs. This platform also provides social-media-like functions to serve as a marketplace for artists and designers to promote their artwork. This marketplace provides a channel for personnel and societies to create and share artwork requests upon their requirements. People could share and exchange ideas and work freely and without constraints.
 
 ## Backend functions
 ### Database related
@@ -22,9 +10,11 @@ Products Platform
 2. Admin user password
 3. List all users
 4. Email Verification
-#### Gordon Ryan
+5. Add new post
+6. Add comments on posts
+
 ### Not database related
 1. User signup
 2. User Login & Logout
 3. Profile Photo
-#### Michael
+4. real-time chatroom
